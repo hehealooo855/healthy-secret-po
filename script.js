@@ -1,16 +1,14 @@
 /* ===========================================================
-   SCRIPT.JS - LOGIKA UTAMA (INTEGRASI MENU & CONFIG)
+   SCRIPT.JS - VERSI FINAL (FIXED CLICK & CONFIG)
    =========================================================== */
 
-// [1] DEFAULT CONFIG (Data Cadangan jika Google Sheet Gagal/Loading)
-// Data ini akan tertimpa otomatis jika koneksi ke Sheet berhasil
+// [1] DATA DEFAULT (Cadangan jika Excel Error)
 let PO_CONFIG = {
     closeDate: "2025-12-30T23:59:00", 
     deliveryText: "Menunggu Update Admin...",
     waAdmin: "62818895488" 
 };
 
-// Data Ongkir
 const SHIPPING_ZONES = [
     { name: "-- Pilih Metode Kirim --", price: 0 },
     { name: "Ambil Sendiri (Pickup)", price: 0 },
@@ -18,42 +16,40 @@ const SHIPPING_ZONES = [
     { name: "Luar Kota (JNE - Cek Admin)", price: 0 }
 ];
 
-// DATA MENU CADANGAN (Fallback)
+// Data Menu Cadangan
 let DATABASE_MENU = [
-    { id: 1, name: "Nasi Soto", price: 30000, img: "Soto.jpeg", desc: "Ayam suwir vegan, kuah kuning rempah.", stok: 50, category: "berat" },
-    { id: 2, name: "Nasi Liwet", price: 30000, img: "Liwet.jpeg", desc: "Nasi gurih santan, tempe orek, sambal.", stok: 20, category: "berat" },
-    { id: 5, name: "Onigiri", price: 18000, img: "Onigiri.jpeg", desc: "Nasi kepal ala Jepang isi tuna vegan.", stok: 30, category: "snack" }
+    { id: 1, name: "Nasi Soto", price: 30000, img: "Soto.jpeg", desc: "Ayam suwir vegan.", stok: 50, category: "berat" },
+    { id: 2, name: "Nasi Liwet", price: 30000, img: "Liwet.jpeg", desc: "Nasi gurih santan.", stok: 20, category: "berat" },
+    { id: 5, name: "Onigiri", price: 18000, img: "Onigiri.jpeg", desc: "Isi tuna vegan.", stok: 30, category: "snack" }
 ];
 
 // ==========================================
-// 🔧 FUNGSI INTEGRASI GOOGLE SHEET (DUAL FETCH)
+// 🔧 FUNGSI INTEGRASI GOOGLE SHEET
 // ==========================================
 async function initSystem() {
-   // SAYA SUDAH MASUKKAN API DARI SCREENSHOT ANDA:
+   // Link API Anda (Sudah saya masukkan)
    const API_ENDPOINT = "https://sheetdb.io/api/v1/kezuoz75thktm"; 
    
    if(!API_ENDPOINT) {
-       console.log("API Kosong, menggunakan data lokal.");
-       runApp(); 
-       return;
+       runApp(); return;
    }
 
    try {
-     console.log("Sedang mengambil data dari Google Sheet...");
+     console.log("Menghubungkan ke Google Sheet...");
      
-     // Ambil Data Menu & Data Config secara bersamaan
+     // Ambil Tab "Menu" dan "Config" secara bersamaan
      const [menuRes, configRes] = await Promise.all([
-        fetch(`${API_ENDPOINT}?sheet=Menu`),   // Ambil Tab Menu
-        fetch(`${API_ENDPOINT}?sheet=Config`)  // Ambil Tab Config
+        fetch(`${API_ENDPOINT}?sheet=Menu`),
+        fetch(`${API_ENDPOINT}?sheet=Config`)
      ]);
 
      const menuData = await menuRes.json();
      const configData = await configRes.json();
 
-     // 1. Update MENU dari Excel
+     // 1. UPDATE MENU
      if(menuData.length > 0) {
         DATABASE_MENU = menuData.map(item => ({
-            id: item.id,
+            id: parseInt(item.id), // [FIX] Wajib diubah ke Angka agar tombol bisa diklik
             name: item.name,
             price: parseInt(item.price),
             img: item.img,
@@ -63,57 +59,50 @@ async function initSystem() {
         }));
      }
 
-     // 2. Update CONFIG (Timer & WA) dari Excel
+     // 2. UPDATE CONFIG
      if(configData.length > 0) {
-        // Ubah format data dari Array ke Object
         const configMap = {};
         configData.forEach(row => { configMap[row.key] = row.value; });
 
-        // Update Config Website
-        // Saya tambahkan .replace agar format tanggal dari Excel aman dibaca browser
         if(configMap.closeDate) PO_CONFIG.closeDate = configMap.closeDate.replace(" ", "T"); 
         if(configMap.deliveryText) PO_CONFIG.deliveryText = configMap.deliveryText;
         if(configMap.waAdmin) PO_CONFIG.waAdmin = configMap.waAdmin;
-        
-        console.log("Config berhasil diupdate:", PO_CONFIG);
      }
 
    } catch (error) {
-     console.error("Gagal koneksi ke SheetDB:", error);
+     console.error("Gagal koneksi, pakai data lokal.", error);
    }
 
-   runApp(); // Jalankan Aplikasi setelah data siap
+   runApp(); 
 }
 
-// FUNGSI MENJALANKAN UI (SETELAH DATA SIAP)
+// FUNGSI MENJALANKAN UI
 function runApp() {
     renderHeroSlides();
     renderGallery();
     renderMainMenu(DATABASE_MENU); 
     renderShippingOptions();
-    updateDeliveryInfo(); // Update Teks Pengiriman Baru
-    startCountdown();     // Mulai Timer dengan Tanggal Baru
+    updateDeliveryInfo(); 
+    startCountdown();     
     updateCartUI();
     
-    // Sembunyikan Preloader
     setTimeout(() => { document.getElementById('preloader').style.display = 'none'; }, 500);
 }
 
 // ==========================================
-// 🎮 LOGIKA UI (SEARCH, CART, DLL)
+// 🎮 LOGIKA UI
 // ==========================================
 
 let cart = JSON.parse(localStorage.getItem('myCart')) || [];
 let currentCategory = 'all';
 
 window.addEventListener("load", function() {
-  document.getElementById('preloader').style.opacity = '1'; // Show loading awal
+  document.getElementById('preloader').style.opacity = '1'; 
   AOS.init({ duration: 1000, once: true, offset: 100 });
   
-  // Panggil Fungsi Utama
-  initSystem();
+  initSystem(); // Jalankan fungsi utama
   
-  // Setup Tombol Scroll Gallery
+  // Setup Scroll
   const container = document.getElementById('menuScroll');
   const btnL = document.getElementById('btnLeft');
   const btnR = document.getElementById('btnRight');
@@ -125,9 +114,8 @@ window.addEventListener("load", function() {
 });
 
 function updateDeliveryInfo() {
-  // Update Teks Tanggal Pengiriman di Banner
-  const elBanner = document.getElementById('deliveryDate');
-  if(elBanner) elBanner.innerText = PO_CONFIG.deliveryText;
+  const el = document.getElementById('deliveryDate');
+  if(el) el.innerText = PO_CONFIG.deliveryText;
 }
 
 function setCategory(cat) {
@@ -235,7 +223,11 @@ function renderShippingOptions() {
 }
 
 function addToCart(id) {
-    let product = DATABASE_MENU.find(p => p.id === id);
+    // Pastikan ID dicari dengan tipe data yang benar
+    let product = DATABASE_MENU.find(p => p.id === id); 
+    
+    if (!product) return showToast("❌ Produk tidak ditemukan (Error ID)");
+
     let qtyInput = document.getElementById(`qty-${id}`);
     let qty = parseInt(qtyInput.value);
 
@@ -314,7 +306,6 @@ function checkoutWA() {
     msg += `_Note: Stok akan divalidasi ulang oleh Admin._%0A`;
     msg += `Mohon info rekening ya. Terima kasih!`;
     
-    // GUNAKAN NOMOR WA DINAMIS DARI GOOGLE SHEET
     window.open(`https://wa.me/${PO_CONFIG.waAdmin}?text=${msg}`);
 
     setTimeout(() => {
