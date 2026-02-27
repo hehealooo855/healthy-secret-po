@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lacak Pesanan - Healthy Secret</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #f9fbfd; font-family: 'Poppins', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .track-card { background: #fff; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
+        .status-box { background: #eef2ff; padding: 20px; border-radius: 10px; border: 1px dashed #0a74da; display: none; margin-top: 20px; text-align: left; }
+        
+        /* STYLE TAMBAHAN UNTUK MODAL INVOICE DIGITAL SIGNATURE */
+        .invoice-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .invoice-card { background: #fff; width: 90%; max-width: 400px; padding: 30px; border-radius: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); text-align: left; position: relative; }
+        .digital-sign-box { background: #f4fdf8; border: 1px solid #25d366; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 11px; word-wrap: break-word; color: #333; }
+        .qr-code-img { width: 80px; height: 80px; float: right; margin-left: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="track-card">
+        <h3 class="fw-bold mb-2">Lacak Pesanan PO 🚚</h3>
+        <p class="text-muted small mb-4">Masukkan ID Pesanan dan PIN Rahasia (Kode Akses) yang dikirimkan via WhatsApp untuk melihat status.</p>
+        
+        <div class="mb-3 text-start">
+            <label class="form-label fw-bold small">ID Pesanan</label>
+            <input type="text" id="orderId" class="form-control" placeholder="Contoh: PO-001">
+        </div>
+        <div class="mb-4 text-start">
+            <label class="form-label fw-bold small">PIN Rahasia (Akses Sesi)</label>
+            <input type="password" id="orderPin" class="form-control" placeholder="Masukkan 4 digit PIN">
+        </div>
+        
+        <button class="btn btn-primary w-100 fw-bold py-2" onclick="trackOrder()">🔍 Verifikasi & Lacak</button>
+        <a href="main.html" class="btn btn-link w-100 mt-2 text-decoration-none text-muted">Kembali ke Menu Utama</a>
+
+        <div class="status-box" id="resultBox">
+            <h5 class="fw-bold text-primary border-bottom pb-2">Status: <span class="text-warning">Sedang Dimasak 🍳</span></h5>
+            <p class="mb-1 small"><b>Pemesan:</b> Budi Santoso</p>
+            <p class="mb-1 small"><b>Pesanan:</b> Nasi Soto (2x)</p>
+            <p class="mb-0 small"><b>Estimasi Selesai:</b> Besok, 09:00 WIB</p>
+            
+            <button class="btn btn-success btn-sm w-100 mt-3 fw-bold" onclick="showInvoice()">📄 Buka e-Invoice (Digital Signature)</button>
+        </div>
+    </div>
+
+    <div class="invoice-modal" id="invoiceModal">
+        <div class="invoice-card">
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                <h5 class="fw-bold text-primary m-0">e-Invoice Resmi</h5>
+                <button onclick="closeInvoice()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #888;">&times;</button>
+            </div>
+            
+            <p class="small mb-1"><b>ID Pesanan:</b> PO-001</p>
+            <p class="small mb-1"><b>Nama:</b> Budi Santoso</p>
+            <p class="small mb-1"><b>Rincian:</b> Nasi Soto (2x)</p>
+            <p class="small mb-3"><b>Total Tagihan:</b> Rp 60.000</p>
+            
+            <div class="digital-sign-box">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Sign:PO-001|Budi|60000" class="qr-code-img" alt="Digital Signature QR">
+                <b class="text-success">✔ Dokumen Sah (Signed)</b><br>
+                Tanda Tangan Digital (SHA-256 Hash):<br>
+                <span id="signatureHash" style="font-family: monospace; color: #0a74da; font-weight: bold;">Generating...</span>
+                <div style="clear: both;"></div>
+            </div>
+
+            <button class="btn btn-outline-primary w-100 mt-4 btn-sm fw-bold" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
+        </div>
+    </div>
+
+    <script>
+        function trackOrder() {
+            const id = document.getElementById('orderId').value;
+            const pin = document.getElementById('orderPin').value;
+
+            // Simulasi Keamanan Sesi: Hanya ID "PO-001" dan PIN "1234" yang bisa masuk
+            if(id === "PO-001" && pin === "1234") {
+                document.getElementById('resultBox').style.display = 'block';
+            } else {
+                document.getElementById('resultBox').style.display = 'none';
+                alert("❌ Akses Ditolak! ID Pesanan atau PIN Rahasia salah. Sistem mendeteksi anomali akses.");
+            }
+        }
+
+        // --- FUNGSI KEAMANAN: TANDA TANGAN DIGITAL (SHA-256 HASH) ---
+        async function showInvoice() {
+            document.getElementById('invoiceModal').style.display = 'flex';
+            
+            // Data yang akan "ditandatangani" (Kombinasi data pesanan)
+            const invoiceData = "PO-001|BudiSantoso|NasiSoto2x|Rp60000|HealthySecret";
+            
+            // Menggunakan Web Crypto API asli bawaan Browser untuk membuat Hash SHA-256
+            const encoder = new TextEncoder();
+            const dataBuffer = encoder.encode(invoiceData);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
+            
+            // Mengubah buffer menjadi string Hexadecimal
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            // Menampilkan sebagian kode Hash (agar muat di layar) sebagai Tanda Tangan
+            document.getElementById('signatureHash').innerText = hashHex.substring(0, 32) + "...";
+        }
+
+        function closeInvoice() {
+            document.getElementById('invoiceModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifikasi OTP - Healthy Secret</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a74da;   
+            --accent: #d4af37;    
+            --light-bg: #f9fbfd;
+            --wa-green: #25D366;
+        }
+        body { 
+            background-color: var(--light-bg); 
+            font-family: 'Poppins', sans-serif; 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0; 
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efek Latar Belakang Mewah */
+        .floating-shape { position: absolute; border-radius: 50%; filter: blur(80px); z-index: 1; opacity: 0.5; animation: float 10s infinite alternate; }
+        .shape-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(212, 175, 55, 0.2); }
+        .shape-2 { bottom: -10%; right: -5%; width: 400px; height: 400px; background: rgba(10, 116, 218, 0.15); }
+        @keyframes float { 0% { transform: translateY(0); } 100% { transform: translateY(30px); } }
+
+        .auth-card { 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(10px);
+            padding: 40px 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08); 
+            width: 100%; 
+            max-width: 400px; 
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .icon-lock { font-size: 40px; background: #eef2ff; width: 80px; height: 80px; line-height: 80px; border-radius: 50%; margin: 0 auto 20px auto; color: var(--primary); }
+
+        .otp-input { 
+            letter-spacing: 20px; 
+            font-size: 2rem; 
+            text-align: center; 
+            font-weight: bold; 
+            border-radius: 12px; 
+            padding: 15px; 
+            border: 2px solid #ddd;
+            color: var(--primary);
+            transition: 0.3s;
+        }
+        .otp-input:focus { border-color: var(--wa-green); outline: none; box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.1); }
+
+        .btn-wa { background: var(--wa-green); color: white; border: none; border-radius: 50px; padding: 12px; font-weight: 600; font-size: 15px; transition: 0.3s; width: 100%; margin-top: 10px;}
+        .btn-wa:hover { background: #20bd5a; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); }
+        .btn-wa:disabled { background: #dc3545 !important; cursor: not-allowed; transform: none; box-shadow: none; }
+    </style>
+</head>
+<body>
+
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+
+    <div class="auth-card">
+        <div class="icon-lock">🔐</div>
+        <h4 class="fw-bold mb-2" style="color: var(--primary);">Verifikasi Akun</h4>
+        
+        <div class="alert alert-success small mb-4 text-start" style="border-radius: 10px; border-left: 4px solid var(--wa-green);">
+            Kode OTP rahasia telah dikirimkan ke nomor WhatsApp:<br>
+            <b id="displayPhone" class="fs-6 text-dark mt-1 d-block">Memuat nomor...</b>
+        </div>
+        
+        <div class="mb-4">
+            <input type="number" id="inputOTP" class="form-control otp-input mx-auto" placeholder="••••" maxlength="4">
+        </div>
+        
+        <button id="btnVerify" class="btn-wa" onclick="verifyOTP()">Verifikasi & Masuk</button>
+        <button class="btn btn-link w-100 mt-3 text-decoration-none text-muted small" onclick="goBack()">Bukan nomor Anda? Kembali.</button>
+    </div>
+
+    <script>
+        let generatedOTP = "";
+        let failedAttempts = 0; // Pelacak Keamanan: Anti-Brute Force
+
+        window.addEventListener('load', function() {
+            const savedData = JSON.parse(localStorage.getItem('hs_user_data'));
+            if(!savedData || !savedData.phone) { 
+                window.location.replace("index.html"); 
+                return; 
+            }
+            
+            document.getElementById('displayPhone').innerText = savedData.phone;
+            
+            // Generate 4 digit OTP
+            generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
+            
+            // Simulasi popup masuknya pesan WhatsApp
+            setTimeout(() => { 
+                alert(`[SIMULASI PESAN WHATSAPP]\n\nPesan dari Bot Healthy Secret:\n"Halo ${savedData.name}, kode OTP Anda adalah: ${generatedOTP}. Jangan berikan kode ini ke siapapun."`); 
+            }, 800);
+        });
+
+        function verifyOTP() {
+            const input = document.getElementById('inputOTP').value;
+            const btn = document.getElementById('btnVerify');
+            
+            if(input === generatedOTP) {
+                // Berhasil
+                alert("Verifikasi Berhasil! Selamat datang di Healthy Secret.");
+                window.location.href = "main.html"; 
+            } else {
+                // Gagal
+                failedAttempts++; 
+                
+                if(failedAttempts >= 3) {
+                    // FITUR KEAMANAN: ACCOUNT LOCKOUT (30 Detik)
+                    btn.disabled = true;
+                    let timeLeft = 30;
+                    
+                    let timer = setInterval(() => {
+                        btn.innerText = `Sistem Terkunci (${timeLeft}s)`;
+                        timeLeft--;
+                        if(timeLeft < 0) {
+                            clearInterval(timer);
+                            btn.disabled = false;
+                            btn.innerText = "Verifikasi & Masuk";
+                            failedAttempts = 0; // Reset hitungan setelah masa hukuman selesai
+                        }
+                    }, 1000);
+                    
+                    alert("🚨 SECURITY ALERT: Terlalu banyak percobaan salah! Sistem mendeteksi potensi Brute Force Attack. Akses dikunci selama 30 detik.");
+                } else {
+                    alert(`❌ Kode OTP Salah! (Percobaan gagal: ${failedAttempts}/3)`);
+                }
+            }
+        }
+
+        function goBack() { 
+            window.location.href = "index.html"; 
+        }
+    </script>
+</body>
+</html>

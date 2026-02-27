@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kebijakan Privasi & Keamanan - Healthy Secret</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #f9fbfd; font-family: 'Poppins', sans-serif; color: #333; margin: 0; }
+        .policy-header { background: #0a74da; color: white; padding: 60px 20px; text-align: center; }
+        .policy-content { background: #fff; max-width: 800px; margin: -30px auto 40px auto; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); font-size: 15px; line-height: 1.8; position: relative; z-index: 10; }
+        .policy-content h4 { font-weight: bold; margin-top: 30px; color: #0a74da; font-size: 18px; }
+        .btn-back { display: inline-block; margin-top: 20px; background: #0a74da; color: #fff; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .btn-back:hover { background: #085ba8; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="policy-header">
+        <h2 class="fw-bold">Kebijakan Privasi & Keamanan Data</h2>
+        <p class="small">Sesuai Standar Keamanan Siber | Terakhir Diperbarui: 2026</p>
+    </div>
+
+    <div class="policy-content">
+        <p>Selamat datang di sistem pemesanan <b>Healthy Secret</b>. Kami sangat menghargai privasi Anda dan berkomitmen penuh untuk melindungi data pribadi yang Anda bagikan kepada kami. Kebijakan Privasi ini menjelaskan arsitektur keamanan yang kami gunakan untuk melindungi transaksi Anda.</p>
+
+        <h4>1. Perlindungan Anti-Bot & Spam</h4>
+        <p>Sistem kami mengimplementasikan teknologi <b>Visual Puzzle CAPTCHA</b> pada halaman masuk. Hal ini memastikan bahwa setiap pesanan yang masuk dilakukan oleh manusia asli, mencegah serangan siber otomatis (<i>bot-spam</i>), dan menjaga integritas data ketersediaan stok kami.</p>
+
+        <h4>2. Otentikasi Multi-Faktor (MFA)</h4>
+        <p>Untuk memastikan bahwa nomor kontak yang digunakan adalah valid dan milik pengguna yang sah, sistem kami menggunakan <b>One-Time Password (OTP)</b> berbasis WhatsApp. Kode otentikasi wajib diverifikasi sebelum sesi pemesanan dapat diakses.</p>
+
+        <h4>3. Enkripsi & Penyimpanan Data</h4>
+        <p>Data sensitif pelanggan seperti Nomor WhatsApp dan Alamat Pengiriman diproses dengan aman. Kami hanya menyimpan data pesanan secara sementara pada penyimpanan lokal peramban (<i>Local Storage</i>) Anda untuk mempermudah pengalaman UI. Kami tidak membagikan atau menjual data Anda kepada pihak ketiga.</p>
+
+        <h4>4. Hak Pengendalian Data (Sesi Pengguna)</h4>
+        <p>Anda memiliki kontrol penuh terhadap data Anda. Jika Anda mengakses sistem kami melalui perangkat umum, Anda dapat menghapus seluruh riwayat pesanan dengan membersihkan <i>cache</i> atau <i>Local Storage</i> peramban untuk mencegah pembajakan sesi (<i>Session Hijacking</i>).</p>
+
+        <div class="text-center border-top pt-4 mt-5">
+            <a href="main.html" class="btn-back">Kembali ke Menu Utama</a>
+        </div>
+    </div>
+
+</body>
+</html>

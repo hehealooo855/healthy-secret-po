@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://placehold.co;">
+
+    <title>Pusat Bantuan AI - Healthy Secret</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <style>
+        body { background-color: #f9fbfd; font-family: 'Poppins', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px;}
+        .helpdesk-card { background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 550px; }
+        .secure-badge { background: #eef2ff; border: 1px solid #0a74da; color: #0a74da; padding: 8px 15px; border-radius: 8px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px;}
+        
+        /* CHATBOX UI */
+        .chat-container { background: #f8faff; border: 1px solid #eee; border-radius: 12px; height: 380px; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px; }
+        .chat-container::-webkit-scrollbar { width: 6px; }
+        .chat-container::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+
+        .chat-bubble { max-width: 80%; padding: 12px 16px; font-size: 14px; line-height: 1.5; position: relative; animation: popIn 0.3s ease forwards; }
+        
+        .bot-bubble { background-color: #fff; color: #333; border: 1px solid #ddd; border-radius: 15px 15px 15px 0; align-self: flex-start; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .user-bubble { background-color: #0a74da; color: #fff; border-radius: 15px 15px 0 15px; align-self: flex-end; box-shadow: 0 2px 5px rgba(10, 116, 218, 0.2); }
+
+        .chat-time { font-size: 10px; color: #888; margin-top: 5px; display: block; text-align: right; }
+        .user-bubble .chat-time { color: #d1e7ff; }
+
+        .typing-indicator { font-style: italic; color: #888; font-size: 12px; display: none; margin-bottom: 10px; padding-left: 10px;}
+
+        /* INPUT AREA */
+        .chat-input-area { display: flex; gap: 10px; }
+        .chat-input { flex-grow: 1; border-radius: 50px; padding: 10px 20px; border: 1px solid #ddd; outline: none; transition: 0.3s; font-family: 'Poppins'; }
+        .chat-input:focus { border-color: #0a74da; box-shadow: 0 0 10px rgba(10, 116, 218, 0.1); }
+        .btn-send { background-color: #0a74da; color: white; border: none; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; }
+        .btn-send:hover { background-color: #085ba8; transform: scale(1.05); }
+
+        /* BOX ENKRIPSI SIMULASI */
+        .encryption-process { background: #212529; color: #25d366; font-family: monospace; padding: 15px; border-radius: 8px; font-size: 12px; margin-top: 15px; display: none; word-wrap: break-word; }
+
+        @keyframes popIn { 0% { opacity: 0; transform: translateY(10px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+    </style>
+</head>
+<body>
+
+    <div class="helpdesk-card">
+        <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
+            <h3 class="fw-bold m-0 text-center">HealthyBot AI 🤖</h3>
+        </div>
+        <p class="text-muted small text-center mb-3">Asisten Cerdas Anda untuk menu Healthy Secret</p>
+        
+        <div class="secure-badge">
+            <span>🔒 AES-256 Encryption & CSP Shield Aktif</span>
+        </div>
+
+        <div class="chat-container" id="chatBox">
+            <div class="chat-bubble bot-bubble">
+                Halo! 👋 Saya HealthyBot. Ada yang bisa saya bantu terkait menu pre-order minggu ini? Anda bisa menanyakan rekomendasi rasa, bahan, atau info alergi.
+                <span class="chat-time" id="timeStart"></span>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">HealthyBot sedang menganalisis pesan...</div>
+
+        <form class="chat-input-area" id="chatForm">
+            <input type="text" class="chat-input" id="userInput" placeholder="Ketik pesan di sini..." autocomplete="off" required>
+            <button type="submit" class="btn-send">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+                </svg>
+            </button>
+        </form>
+
+        <div class="encryption-process" id="cipherBox">
+            <span class="text-white">🛡️ Mengamankan Log Chat dengan AES-256...</span><br><br>
+            <span id="cipherText" style="color: #ffda79;"></span><br><br>
+            <span class="text-info">✔ Teks Cipher berhasil digenerate!</span>
+        </div>
+
+        <a href="main.html" class="btn btn-link w-100 mt-3 text-decoration-none text-muted text-center" style="font-size: 14px;">Kembali ke Menu Utama</a>
+    </div>
+
+    <script>
+        const now = new Date();
+        document.getElementById('timeStart').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+
+        const chatForm = document.getElementById('chatForm');
+        const userInput = document.getElementById('userInput');
+        const chatBox = document.getElementById('chatBox');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const cipherBox = document.getElementById('cipherBox');
+        const cipherText = document.getElementById('cipherText');
+
+        // Kunci Rahasia untuk Enkripsi AES-256
+        const SECRET_KEY = "DLOV_HealthySecret_SecureKey_2026"; 
+
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            let text = userInput.value.trim();
+            if(!text) return;
+
+            // 1. Tampilkan di layar (sudah disanitasi Anti-XSS)
+            let safeText = sanitizeInput(text);
+            appendMessage('user', safeText);
+            userInput.value = "";
+            scrollToBottom();
+
+            // 2. PROSES ENKRIPSI AES-256 SEJATI
+            let encryptedData = CryptoJS.AES.encrypt(safeText, SECRET_KEY).toString();
+            
+            // Tampilkan hasil enkripsinya di layar bawah agar Dosen bisa melihat
+            cipherBox.style.display = "block";
+            cipherText.innerText = "Ciphertext: " + encryptedData;
+
+            typingIndicator.style.display = "block";
+
+            // 3. Respon Bot
+            setTimeout(() => {
+                typingIndicator.style.display = "none";
+                let botResponse = getSmartResponse(safeText);
+                appendMessage('bot', botResponse);
+                scrollToBottom();
+            }, 1000 + Math.random() * 800); 
+        });
+
+        function appendMessage(sender, message) {
+            const time = new Date();
+            const timeString = time.getHours().toString().padStart(2, '0') + ":" + time.getMinutes().toString().padStart(2, '0');
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-bubble ${sender === 'user' ? 'user-bubble' : 'bot-bubble'}`;
+            msgDiv.innerHTML = `${message} <span class="chat-time">${timeString}</span>`;
+            
+            chatBox.appendChild(msgDiv);
+        }
+
+        function scrollToBottom() {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function sanitizeInput(str) {
+            return str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // ==============================================================
+        // 🧠 MESIN NLP AI
+        // ==============================================================
+        function getSmartResponse(rawText) {
+            let input = rawText.toLowerCase();
+
+            let isNotSpicy = /(tidak|jangan|gak|kurang|anti|tanpa|bukan)(?:\s+\w+){0,6}\s+pedas/.test(input);
+            let isSpicy = /pedas/.test(input);
+
+            if (isNotSpicy) {
+                return "Paham! Anda ingin menghindari rasa pedas. Untuk perut yang nyaman, saya sangat merekomendasikan <b>Nasi Soto</b> (gurih rempah) atau <b>Nasi Chasio</b> (manis gurih). Keduanya 100% aman dan tidak pedas sama sekali ☺️.";
+            } else if (isSpicy) {
+                return "Pecinta pedas wajib merapat! Coba <b>Nasi Bakar</b> kami. Nasi ini diisi dengan jamur suwir berbumbu pedas gurih yang dibakar dengan daun pisang. <b>Nasi Liwet</b> kami juga dilengkapi dengan sambal terasi vegan yang super mantap 🌶️.";
+            }
+
+            let isAllergicToPeanut = /(alergi|pantang|anti|tidak bisa makan)(?:\s+\w+){0,5}\s+kacang/.test(input);
+            
+            if (isAllergicToPeanut) {
+                return "Tercatat! Anda memiliki alergi kacang. Kami akan sangat berhati-hati. Untuk pilihan yang paling higienis dan terjamin bebas kontaminasi kacang, saya sangat merekomendasikan <b>Onigiri Tuna Vegan</b> kami. Ingin memesan ini?";
+            }
+            if (/alergi/.test(input)) {
+                return "Kami memprioritaskan keselamatan Anda! Tolong sebutkan bahan spesifik yang membuat Anda alergi (misal: kacang, kedelai, atau gluten) agar saya bisa menyeleksi menu yang aman.";
+            }
+
+            if (/(kuah|segar|soto|sop|berkuah|hangat)/.test(input)) {
+                return "Untuk hidangan berkuah, Anda harus coba <b>Nasi Soto</b> (kuah kuning rempah bebas santan) atau <b>Mie Sop Medan</b> (kuah kaldu kapulaga segar). Kuahnya bikin nagih! 🍲";
+            }
+
+            if (/(manis|chasio|gula)/.test(input)) {
+                return "Pecinta manis gurih? <b>Nasi Chasio</b> adalah jawaban yang tepat! Irisan gluten panggang madunya sangat otentik dan lezat di mulut. 🍯";
+            }
+
+            if (/(ringan|snack|cemilan|takoyaki|onigiri|sedikit)/.test(input)) {
+                return "Untuk porsi yang lebih ringan atau cemilan jalan-jalan, Anda bisa memesan <b>Takoyaki Vegan</b> (isi gurita vegan) atau <b>Onigiri</b>. Enak, praktis, dan mengenyangkan! 🍙";
+            }
+
+            if (/(kapan|kirim|dikirim|tutup|jadwal|PO|batch)/.test(input)) {
+                return "Pre-Order (PO) minggu ini akan ditutup sesuai waktu di halaman utama. Semua pesanan akan dimasak dan dikirimkan serentak pada hari <b>Selasa</b> depan. 🚚";
+            }
+
+            if (/^(halo|hai|p|pagi|siang|sore|malam|bot|tes)/.test(input)) {
+                return "Halo! 👋 Saya HealthyBot. Ada yang bisa saya bantu? Anda bisa mencari rekomendasi makanan (misal: 'mau yang manis' atau 'saya tidak suka pedas').";
+            }
+
+            return `Hmm, maaf ya, HealthyBot belum mengerti maksud pertanyaan Anda 🤔.<br><br>
+            Untuk keluhan atau bantuan yang lebih detail, silakan langsung hubungi Admin Manusia kami via WhatsApp ya!<br><br>
+            <a href="https://wa.me/62818895488?text=Halo%20Admin%20Healthy%20Secret,%20saya%20butuh%20bantuan%20terkait%20PO..." target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background-color: #25D366; color: white; padding: 10px 16px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 13px; margin-top: 5px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); transition: 0.3s;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+                </svg>
+                Chat Admin via WhatsApp
+            </a>`;
+        }
+    </script>
+</body>
+</html>

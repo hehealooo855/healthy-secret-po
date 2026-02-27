@@ -1,176 +1,271 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>Healthy Secret - Catering Vegan Medan</title>
-  <meta name="description" content="Pre-Order Makanan Vegan Sehat & Higienis di Medan. Pesan sekarang!">
-  
-  <meta property="og:title" content="Healthy Secret - Premium Vegan PO">
-  <meta property="og:description" content="Open PO Makanan Vegan Sehat. Menu Spesial Minggu Ini!">
-  <meta property="og:image" content="https://placehold.co/600x400/0a74da/fff?text=Healthy+Secret"> 
-  
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Restaurant",
-    "name": "Healthy Secret",
-    "image": "https://placehold.co/600x400/0a74da/fff?text=Healthy+Secret",
-    "description": "Catering Vegan Sehat Medan.",
-    "priceRange": "Rp 15.000 - Rp 50.000"
-  }
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - Healthy Secret PO</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a74da;   
+            --accent: #d4af37;    
+            --light-bg: #f9fbfd;
+        }
+        body { 
+            background-color: var(--light-bg); 
+            font-family: 'Poppins', sans-serif; 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0; 
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Efek Latar Belakang Mewah */
+        .floating-shape { position: absolute; border-radius: 50%; filter: blur(80px); z-index: 1; opacity: 0.5; animation: float 10s infinite alternate; }
+        .shape-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(212, 175, 55, 0.2); }
+        .shape-2 { bottom: -10%; right: -5%; width: 400px; height: 400px; background: rgba(10, 116, 218, 0.15); }
+        @keyframes float { 0% { transform: translateY(0); } 100% { transform: translateY(30px); } }
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:wght@700&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+        .auth-card { 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(10px);
+            padding: 40px 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08); 
+            width: 100%; 
+            max-width: 450px; 
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
 
-  <link rel="stylesheet" href="style.css">
+        .brand-title { font-family: 'Playfair Display', serif; color: var(--primary); font-weight: 700; font-size: 2rem; text-align: center; margin-bottom: 5px; }
+        .brand-subtitle { text-align: center; color: #666; font-size: 13px; margin-bottom: 30px; }
+
+        .form-label { font-size: 13px; font-weight: 600; color: #444; }
+        .form-control { border-radius: 10px; padding: 12px 15px; border: 1px solid #ddd; font-size: 14px; transition: 0.3s; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(10, 116, 218, 0.1); }
+
+        /* PUZZLE CAPTCHA STYLES */
+        .captcha-container { background: #f8faff; border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; position: relative;}
+        .puzzle-box { position: relative; width: 100%; max-width: 320px; height: 150px; margin: 0 auto 15px auto; border-radius: 8px; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); background-color: #eee;}
+        #mainCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        #pieceCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+        
+        .slider-container { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 10px;}
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 35px; width: 35px; border-radius: 50%; background: var(--primary); cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 3px solid #fff; margin-top: -12px; transition: background 0.3s;}
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 10px; cursor: pointer; background: #ddd; border-radius: 10px; border: 1px solid #ccc; }
+        input[type=range]:focus { outline: none; }
+        
+        .captcha-status { font-size: 12px; font-weight: bold; margin-top: 10px; color: #666; transition: 0.3s;}
+        .captcha-success { color: #25d366 !important; }
+        .captcha-fail { color: #dc3545 !important; }
+
+        .btn-primary-custom { background: var(--primary); color: white; border: none; border-radius: 50px; padding: 12px; font-weight: 600; font-size: 15px; transition: 0.3s; width: 100%; }
+        .btn-primary-custom:hover { background: #085ba8; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(10, 116, 218, 0.3); }
+        .btn-primary-custom:disabled { background: #b0b0b0; cursor: not-allowed; transform: none; box-shadow: none; }
+    </style>
 </head>
-
 <body>
 
-  <div id="preloader"><div class="loader"></div></div>
-  <div id="toast-container"></div> 
-  <div class="floating-shape shape-1"></div>
-  <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
 
-  <div class="po-banner">
-    <div id="banner-text">📢 <b>PRE-ORDER BATCH OPEN</b> | Close Order:</div>
-    <div id="countdown" class="d-flex align-items-center gap-1 mx-2">
-        <span class="timer-box" id="days">0</span>d :
-        <span class="timer-box" id="hours">00</span>h :
-        <span class="timer-box" id="minutes">00</span>m :
-        <span class="timer-box" id="seconds">00</span>s
-    </div>
-    <div>| Pengiriman: <span id="deliveryDate" style="color:var(--accent-light); font-weight:bold;">...</span></div>
-  </div>
+    <div class="auth-card">
+        <div class="brand-title">Healthy Secret 🌿</div>
+        <div class="brand-subtitle">Silakan isi data untuk masuk ke sistem Pre-Order.</div>
 
-  <nav class="navbar navbar-expand-sm navbar-light sticky-top" id="mainNav">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="#home" style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 24px; color: var(--primary);">
-        <img src="healthy secret logo.png" onerror="this.src='https://placehold.co/100x100?text=Logo'" alt="Logo" style="height: 60px; margin-right: 10px; border-radius: 6px;" loading="lazy">
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarContent">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
-          <li class="nav-item"><a class="nav-link active" href="#menu-gallery">Menu PO</a></li>
-          <li class="nav-item">
-            <a class="nav-link active" href="#" onclick="toggleCart(); return false;" style="display: flex; align-items: center; gap: 5px;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart-fill" viewBox="0 0 16 16" style="margin-bottom: 2px;">
-                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-              </svg>
-              <span>Cart</span>
-              <span id="cart-count" style="background:#ffda79; color:#333; padding:0 6px; border-radius:50%; font-size:12px; font-weight:bold;">0</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+        <form id="loginForm">
+            <div class="mb-3">
+                <label class="form-label">👤 Nama Lengkap</label>
+                <input type="text" id="userName" class="form-control" placeholder="Contoh: Budi Santoso" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">📱 Nomor WhatsApp Aktif</label>
+                <input type="number" id="userPhone" class="form-control" placeholder="Contoh: 08123456789" required>
+            </div>
 
-  <section class="hero-slider" id="home"> 
-    <div class="slides" id="heroSlides"></div>
-    <div class="hero-text" data-aos="zoom-in" data-aos-duration="1000">
-      <h1 style="font-family: 'Poppins', sans-serif; font-size: 3rem; font-weight: 700; color: #ffda79;">
-        Healthy Secret 🌿
-      </h1>
-      <p style="font-family: Poppins, sans-serif"; >
-        <b>PRE-ORDER SYSTEM OPEN</b><br>
-        Nikmati kelezatan makanan vegan yang sehat dan higienis.
-      </p>
-      <a href="#menu-gallery" class="btn-hero">Ikut PO Sekarang</a>
-    </div>
-  </section>
+            <div class="mb-3">
+                <label class="form-label">📍 Alamat Pengiriman (Opsional)</label>
+                <textarea id="userAddress" class="form-control" rows="2" placeholder="Masukkan alamat lengkap..."></textarea>
+            </div>
 
-  <section class="features">
-    <div class="feature-container">
-      <div class="feature-box" data-aos="fade-up"><div class="icon">🌿</div> <h3>100% Vegan</h3><p>Bahan nabati pilihan terbaik.</p></div>
-      <div class="feature-box" data-aos="fade-up" data-aos-delay="100"><div class="icon">✨</div> <h3>Made by Order</h3><p>Hanya dimasak saat PO.</p></div>
-      <div class="feature-box" data-aos="fade-up" data-aos-delay="200"><div class="icon">📅</div> <h3>PO Mingguan</h3><p>Pengiriman serentak.</p></div>
-    </div>
-  </section>
+            <label class="form-label">🛡️ Verifikasi Keamanan (Geser Puzzle)</label>
+            <div class="captcha-container">
+                <div class="puzzle-box">
+                    <canvas id="mainCanvas"></canvas>
+                    <canvas id="pieceCanvas"></canvas>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="puzzleSlider" min="0" max="250" value="0" disabled>
+                </div>
+                <div id="captchaStatus" class="captcha-status">Tarik slider untuk mencocokkan puzzle</div>
+            </div>
 
-  <section class="testimonials">
-    <h2 data-aos="fade-up">Customer Testimonials 🌟</h2>
-    <div class="testimonial-grid">
-      <div class="testi-card" data-aos="fade-up" data-aos-delay="100"><p>“非常好吃”</p> <h4>- Lim Kun Cui</h4></div>
-      <div class="testi-card" data-aos="fade-up" data-aos-delay="200"><p>“Best Vegan food ive ever had!!”</p> <h4>- Moriarti</h4></div>
-      <div class="testi-card" data-aos="fade-up" data-aos-delay="300"><p>“Vegetarian yang terenak”</p> <h4>- Supratman</h4></div>
-    </div>
-  </section>
-
-  <section class="gallery" id="menu-gallery">
-    <h2 data-aos="fade-up">Highlight Menu 🌿</h2>
-    <div style="display:flex; align-items:center; justify-content:center; gap:12px;">
-      <button id="btnLeft" style="padding:10px 14px; border-radius:8px; border:none; background:#0a74da; color:#fff; cursor:pointer; font-size:18px;">←</button>
-      <div id="menuScroll"></div>
-      <button id="btnRight" style="padding:10px 14px; border-radius:8px; border:none; background:#0a74da; color:#fff; cursor:pointer; font-size:18px;">→</button>
-    </div>
-  </section>
-
-  <section class="menu-section">
-    <h2 data-aos="fade-up">Batch PO Minggu Ini ✨</h2>
-    <p style="margin-bottom:40px; color:#666;">Pengiriman: <b style="color:var(--primary)" id="deliveryDateTarget">...</b></p>
-    
-    <div class="filter-wrapper" data-aos="fade-up">
-        <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" class="search-input" placeholder="Cari menu..." onkeyup="filterMenu()">
-        </div>
-        <div class="filter-pills">
-            <button class="filter-btn active" onclick="setCategory('all')" id="btn-all">Semua</button>
-            <button class="filter-btn" onclick="setCategory('berat')" id="btn-berat">Makanan Berat</button>
-            <button class="filter-btn" onclick="setCategory('snack')" id="btn-snack">Snack</button>
-        </div>
+            <button type="submit" id="submitBtn" class="btn-primary-custom" disabled>Kirim OTP ke WhatsApp ➜</button>
+        </form>
     </div>
 
-    <div class="menu-grid" id="mainMenuGrid"></div>
-  </section>
+    <script>
+        // ==========================================
+        // 🧩 LOGIKA PUZZLE CAPTCHA
+        // ==========================================
+        const mainCanvas = document.getElementById('mainCanvas');
+        const pieceCanvas = document.getElementById('pieceCanvas');
+        const mainCtx = mainCanvas.getContext('2d');
+        const pieceCtx = pieceCanvas.getContext('2d');
+        const slider = document.getElementById('puzzleSlider');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusText = document.getElementById('captchaStatus');
 
-  <footer><p>Created By TeamDLOV 2024</p></footer>
-  <a href="#" onclick="toggleCart(); return false;" class="wa-btn">WhatsApp</a>
+        let puzzleX = 0; // Koordinat asli lubang
+        let puzzleY = 0;
+        const pieceSize = 45;
+        let isVerified = false;
 
-  <div id="popup">
-    <div class="popup-content">
-      <div class="popup-header"><h3>Detail Menu</h3> <button onclick="closePopup()" class="close-icon">×</button></div>
-      <div class="popup-body"><p id="popupContent">...</p></div>
-      <div class="popup-footer"><button onclick="closePopup()" class="btn-close-modal">Tutup</button></div>
-    </div>
-  </div>
+        function initCaptcha() {
+            // Setup Ukuran
+            mainCanvas.width = 320; mainCanvas.height = 150;
+            pieceCanvas.width = 320; pieceCanvas.height = 150;
 
-  <div id="cartModal" class="cart-overlay">
-    <div class="cart-box">
-      <div class="cart-header"><h3>Daftar Pesanan (PO)</h3> <button onclick="toggleCart()" class="close-btn">×</button></div>
-      <div class="cart-body">
-        <div id="cartList"></div>
-        <hr style="margin: 20px 0; border-top: 1px dashed #ddd;">
-        <div>
-            <label class="form-label">👤 Nama Pemesan</label>
-            <input type="text" id="cust-name" class="form-input" placeholder="Nama Anda...">
-            <label class="form-label">🚚 Pengiriman (Ongkir)</label>
-            <select id="shipping-zone" class="form-input" onchange="updateCartUI()"></select>
-            <label class="form-label">📍 Alamat Lengkap</label>
-            <textarea id="cust-address" class="form-input" rows="2" placeholder="Alamat lengkap..."></textarea>
-        </div>
-      </div>
-      <div class="cart-footer">
-        <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:14px; color:#555;"><span>Subtotal:</span> <span id="cartSubtotal">Rp 0</span></div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:14px; color:#555;"><span>Ongkir:</span> <span id="cartShipping">Rp 0</span></div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h4>Total:</h4> <h4 style="color:var(--primary)" id="cartTotal">Rp 0</h4></div>
-        <button onclick="checkoutWA()" class="checkout-btn">Kirim Pesanan (PO) ke WhatsApp</button>
-      </div>
-    </div>
-  </div>
+            // Generate posisi acak untuk lubang (Harus di setengah kanan)
+            puzzleX = Math.floor(Math.random() * 100) + 150; 
+            puzzleY = Math.floor(Math.random() * 80) + 20;
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  
-  <script src="script.js"></script>
+            // Gambar Background Pattern (Warna Tema Healthy Secret)
+            let grad = mainCtx.createLinearGradient(0, 0, 320, 150);
+            grad.addColorStop(0, "#0a74da");
+            grad.addColorStop(1, "#d4af37");
+            mainCtx.fillStyle = grad;
+            mainCtx.fillRect(0, 0, 320, 150);
+            
+            // Tambahkan corak ke background agar tidak polos
+            mainCtx.fillStyle = "rgba(255, 255, 255, 0.1)";
+            for(let i=0; i<20; i++) {
+                mainCtx.beginPath();
+                mainCtx.arc(Math.random()*320, Math.random()*150, Math.random()*20+10, 0, Math.PI*2);
+                mainCtx.fill();
+            }
 
+            // --- MENGGAMBAR POTONGAN PUZZLE ---
+            drawPuzzlePiece(mainCtx, puzzleX, puzzleY, "fill", "rgba(0,0,0,0.5)"); // Lubang Hitam
+            
+            // Salin area asli dari main canvas untuk dijadikan potongan geser
+            let pieceImgData = mainCtx.getImageData(puzzleX, puzzleY - 10, pieceSize + 15, pieceSize + 15);
+            
+            pieceCtx.clearRect(0, 0, 320, 150);
+            drawPuzzlePiece(pieceCtx, 10, puzzleY, "clip", ""); // Bentuk klip
+            
+            // Gambar pola background ke dalam potongan puzzle
+            let pieceGrad = pieceCtx.createLinearGradient(0, 0, 320, 150);
+            pieceGrad.addColorStop(0, "#0a74da");
+            pieceGrad.addColorStop(1, "#d4af37");
+            pieceCtx.fillStyle = pieceGrad;
+            pieceCtx.fillRect(10, puzzleY, pieceSize, pieceSize);
+            pieceCtx.strokeStyle = "#fff";
+            pieceCtx.lineWidth = 2;
+            pieceCtx.stroke();
+            
+            slider.disabled = false;
+            slider.value = 0;
+            isVerified = false;
+            submitBtn.disabled = true;
+            statusText.innerText = "Tarik slider untuk mencocokkan puzzle";
+            statusText.className = "captcha-status";
+        }
+
+        // Fungsi menggambar bentuk puzzle (jigsaw sederhana)
+        function drawPuzzlePiece(ctx, x, y, operation, color) {
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + pieceSize / 2 - 5, y);
+            ctx.arc(x + pieceSize / 2, y, 7, Math.PI, 0, false); // Benjolan atas
+            ctx.lineTo(x + pieceSize, y);
+            ctx.lineTo(x + pieceSize, y + pieceSize / 2 - 5);
+            ctx.arc(x + pieceSize, y + pieceSize / 2, 7, -Math.PI / 2, Math.PI / 2, false); // Benjolan kanan
+            ctx.lineTo(x + pieceSize, y + pieceSize);
+            ctx.lineTo(x, y + pieceSize);
+            ctx.lineTo(x, y);
+            ctx.closePath();
+
+            if (operation === "fill") {
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = "rgba(255,255,255,0.3)";
+                ctx.stroke();
+            } else if (operation === "clip") {
+                ctx.clip();
+            }
+        }
+
+        // Event Slider Digeser
+        slider.addEventListener('input', function(e) {
+            if(isVerified) return;
+            let moveX = e.target.value;
+            // Geser canvas lapisan atas
+            pieceCanvas.style.transform = `translateX(${moveX}px)`;
+        });
+
+        // Event Saat Slider Dilepas (Validasi)
+        slider.addEventListener('change', function(e) {
+            if(isVerified) return;
+            let currentX = parseInt(e.target.value) + 10; // +10 karena potongan digambar di x=10
+            
+            // Toleransi akurasi geser (5 pixel)
+            if (Math.abs(currentX - puzzleX) < 5) {
+                isVerified = true;
+                slider.disabled = true;
+                statusText.innerText = "✔ Verifikasi Berhasil!";
+                statusText.className = "captcha-status captcha-success";
+                submitBtn.disabled = false; // Buka kunci tombol Kirim OTP
+            } else {
+                statusText.innerText = "❌ Posisi tidak pas! Coba lagi.";
+                statusText.className = "captcha-status captcha-fail";
+                // Kembalikan puzzle ke ujung kiri
+                setTimeout(() => {
+                    slider.value = 0;
+                    pieceCanvas.style.transform = `translateX(0px)`;
+                    statusText.innerText = "Tarik slider untuk mencocokkan puzzle";
+                    statusText.className = "captcha-status";
+                }, 800);
+            }
+        });
+
+        // Muat puzzle saat halaman pertama kali dibuka
+        window.onload = initCaptcha;
+
+        // ==========================================
+        // 🔒 FORM SUBMISSION
+        // ==========================================
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if(!isVerified) {
+                alert("Harap selesaikan Puzzle CAPTCHA terlebih dahulu!");
+                return;
+            }
+
+            // Sanitasi Input sebelum disimpan (Anti-XSS Level Dasar)
+            const sanitize = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            
+            const data = {
+                name: sanitize(document.getElementById('userName').value),
+                phone: sanitize(document.getElementById('userPhone').value),
+                address: sanitize(document.getElementById('userAddress').value || "-")
+            };
+
+            // Simpan ke sesi lokal
+            localStorage.setItem('hs_user_data', JSON.stringify(data));
+            
+            // Lanjut ke OTP
+            window.location.href = "otp.html";
+        });
+    </script>
 </body>
 </html>
