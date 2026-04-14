@@ -208,6 +208,19 @@
     .shape-2 { bottom: 10%; right: -5%; width: 400px; height: 400px; background: rgba(15, 23, 42, 0.1); }
     @keyframes float { 0% { transform: translateY(0); } 100% { transform: translateY(30px); } }
     @media (max-width: 768px) { .features { margin-top: 30px; } }
+
+    /* =======================================================
+       CSS TAMBAHAN UNTUK CAPTCHA ADMIN LOGIN (SUNTIKAN BARU)
+       ======================================================= */
+    .captcha-container { background: #f8faff; border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
+    .puzzle-box { position: relative; width: 100%; max-width: 320px; height: 150px; margin: 0 auto 15px auto; border-radius: 8px; overflow: hidden; background-color: #eee; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); }
+    #mainCanvas, #pieceCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    #pieceCanvas { z-index: 2; pointer-events: none; }
+    .slider-container { display: flex; align-items: center; justify-content: center; padding: 0 10px; }
+    input[type=range].puzzle-slider { -webkit-appearance: none; width: 100%; background: transparent; }
+    input[type=range].puzzle-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 35px; width: 35px; border-radius: 50%; background: var(--primary); cursor: pointer; border: 3px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.3); margin-top: -12px; transition: background 0.3s; }
+    input[type=range].puzzle-slider::-webkit-slider-runnable-track { width: 100%; height: 10px; background: #ddd; border-radius: 10px; border: 1px solid #ccc; cursor: pointer; }
+    .captcha-status { font-size: 12px; font-weight: bold; margin-top: 10px; color: #666; transition: 0.3s; }
   </style>
 </head>
 
@@ -244,6 +257,12 @@
           <li class="nav-item"><a class="nav-link active" href="#menu-gallery">Menu PO</a></li>
           
           <li class="nav-item"><a class="nav-link text-info" href="secure-helpdesk.html">🤖 Healthy Bot</a></li>
+
+          <li class="nav-item">
+            <a class="nav-link text-danger" href="#" data-bs-toggle="modal" data-bs-target="#adminLoginModal" style="display: flex; align-items: center; gap: 5px; margin-right: 15px;">
+              <span>🔒 Admin</span>
+            </a>
+          </li>
           
           <li class="nav-item">
             <a class="nav-link active" href="#" onclick="toggleCart(); return false;" style="display: flex; align-items: center; gap: 5px;">
@@ -568,6 +587,41 @@
     </div>
   </div>
 
+  <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title">Admin Security Login</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+            <div class="mb-3">
+                <label class="form-label small fw-bold">Username</label>
+                <input type="text" id="adminUser" class="form-control" placeholder="admin">
+            </div>
+            <div class="mb-4">
+                <label class="form-label small fw-bold">Password</label>
+                <input type="password" id="adminPass" class="form-control" placeholder="••••••••">
+            </div>
+            
+            <label class="form-label small fw-bold mb-2">🧩 Verifikasi Keamanan (Geser Puzzle)</label>
+            <div class="captcha-container">
+                <div class="puzzle-box">
+                    <canvas id="mainCanvas"></canvas>
+                    <canvas id="pieceCanvas"></canvas>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="puzzleSlider" class="puzzle-slider" min="0" max="250" value="0">
+                </div>
+                <div id="captchaStatus" class="captcha-status">Tarik slider untuk mencocokkan kepingan</div>
+            </div>
+            
+            <button id="btnLogin" class="btn btn-primary w-100 fw-bold py-2 mt-3" onclick="handleAdminLogin()" disabled>Login ke Dashboard Admin</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="cartModal" class="cart-overlay">
     <div class="cart-box">
       <div class="cart-header">
@@ -595,6 +649,7 @@
   </div>
 
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
     // ==========================================
@@ -915,6 +970,112 @@
       
       // Kirim ke WA
       window.open(`https://wa.me/${PO_CONFIG.waNumber}?text=${msg}`);
+    }
+
+    // ==========================================
+    // 🧩 SUNTIKAN BARU: LOGIKA PUZZLE CAPTCHA ADMIN
+    // ==========================================
+    const canvas = document.getElementById('mainCanvas');
+    const piece = document.getElementById('pieceCanvas');
+    const ctx = canvas ? canvas.getContext('2d') : null;
+    const pCtx = piece ? piece.getContext('2d') : null;
+    const slider = document.getElementById('puzzleSlider');
+    let puzzleX = 0;
+    let puzzleY = 50;
+    let isVerified = false;
+    const pieceSize = 45;
+
+    function initCaptcha() {
+        if(!canvas || !piece) return;
+        canvas.width = 320; canvas.height = 150; 
+        piece.width = 320; piece.height = 150;
+        puzzleX = Math.floor(Math.random() * 100) + 150; 
+
+        // Background Captcha
+        let grad = ctx.createLinearGradient(0, 0, 320, 150);
+        grad.addColorStop(0, "#0a74da");
+        grad.addColorStop(1, "#d4af37");
+        ctx.fillStyle = grad; 
+        ctx.fillRect(0,0,320,150);
+        
+        ctx.fillStyle = "rgba(255,255,255,0.15)";
+        for(let i=0; i<15; i++) { 
+            ctx.beginPath(); 
+            ctx.arc(Math.random()*320, Math.random()*150, Math.random()*20+10, 0, Math.PI*2); 
+            ctx.fill(); 
+        }
+
+        // Gambar Lubang
+        ctx.fillStyle = "rgba(0,0,0,0.5)"; 
+        ctx.fillRect(puzzleX, puzzleY, pieceSize, pieceSize);
+
+        // Kepingan Puzzle
+        pCtx.clearRect(0,0,320,150);
+        pCtx.fillStyle = "#ffda79"; 
+        pCtx.fillRect(10, puzzleY, pieceSize, pieceSize);
+        pCtx.strokeStyle = "#fff"; 
+        pCtx.lineWidth = 2;
+        pCtx.strokeRect(10, puzzleY, pieceSize, pieceSize);
+        
+        if(slider) {
+            slider.value = 0; 
+            slider.disabled = false;
+        }
+        piece.style.transform = `translateX(0px)`;
+        isVerified = false;
+        document.getElementById('btnLogin').disabled = true;
+        const status = document.getElementById('captchaStatus');
+        if(status) {
+            status.innerHTML = "Tarik slider untuk mencocokkan kepingan";
+            status.style.color = "#666";
+        }
+    }
+
+    // Panggil saat modal admin dibuka (Fitur Bootstrap)
+    const adminModalEl = document.getElementById('adminLoginModal');
+    if(adminModalEl) {
+        adminModalEl.addEventListener('shown.bs.modal', function () {
+            initCaptcha();
+        });
+    }
+
+    if(slider) {
+        slider.addEventListener('input', (e) => {
+            if(isVerified) return;
+            piece.style.transform = `translateX(${e.target.value}px)`;
+        });
+
+        slider.addEventListener('change', (e) => {
+            if(isVerified) return;
+            let currentX = parseInt(e.target.value) + 10; 
+            if (Math.abs(currentX - puzzleX) < 8) {
+                isVerified = true; 
+                slider.disabled = true;
+                document.getElementById('captchaStatus').innerHTML = "✅ Verifikasi Berhasil!";
+                document.getElementById('captchaStatus').style.color = "#25d366";
+                document.getElementById('btnLogin').disabled = false;
+            } else {
+                // Jika salah, reset posisi
+                initCaptcha();
+                showToast("❌ Verifikasi gagal, coba lagi!");
+            }
+        });
+    }
+
+    // ==========================================
+    // 🔐 SUNTIKAN BARU: ADMIN LOGIN & REDIRECT
+    // ==========================================
+    function handleAdminLogin() {
+        const u = document.getElementById('adminUser').value;
+        const p = document.getElementById('adminPass').value;
+        if(u === "admin" && p === "medan2026") {
+            localStorage.setItem('HS_AUTH', 'true');
+            showToast("✅ Mengarahkan ke Dashboard Admin...");
+            setTimeout(() => window.location.href = 'admin.html', 1500);
+        } else {
+            alert('Username atau Password salah!');
+            initCaptcha();
+        }
     }
   </script>
       
