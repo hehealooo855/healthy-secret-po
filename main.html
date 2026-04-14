@@ -210,7 +210,7 @@
     @media (max-width: 768px) { .features { margin-top: 30px; } }
 
     /* =======================================================
-       CSS TAMBAHAN UNTUK CAPTCHA ADMIN LOGIN (SUNTIKAN BARU)
+       SUNTIKAN CSS: TAMBAHAN UNTUK CAPTCHA ADMIN LOGIN 
        ======================================================= */
     .captcha-container { background: #f8faff; border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
     .puzzle-box { position: relative; width: 100%; max-width: 320px; height: 150px; margin: 0 auto 15px auto; border-radius: 8px; overflow: hidden; background-color: #eee; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); }
@@ -973,7 +973,7 @@
     }
 
     // ==========================================
-    // 🧩 SUNTIKAN BARU: LOGIKA PUZZLE CAPTCHA ADMIN
+    // 🧩 SUNTIKAN JS: LOGIKA PUZZLE CAPTCHA ADMIN
     // ==========================================
     const canvas = document.getElementById('mainCanvas');
     const piece = document.getElementById('pieceCanvas');
@@ -1063,7 +1063,7 @@
     }
 
     // ==========================================
-    // 🔐 SUNTIKAN BARU: ADMIN LOGIN & REDIRECT
+    // 🔐 SUNTIKAN JS: ADMIN LOGIN & REDIRECT
     // ==========================================
     function handleAdminLogin() {
         const u = document.getElementById('adminUser').value;
@@ -1078,6 +1078,6 @@
         }
     }
   </script>
-      
+
 </body>
 </html>
