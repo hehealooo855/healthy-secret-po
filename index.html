@@ -41,10 +41,11 @@
             position: relative;
             z-index: 10;
             border: 1px solid rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
         }
 
         .brand-title { font-family: 'Playfair Display', serif; color: var(--primary); font-weight: 700; font-size: 2rem; text-align: center; margin-bottom: 5px; }
-        .brand-subtitle { text-align: center; color: #666; font-size: 13px; margin-bottom: 30px; }
+        .brand-subtitle { text-align: center; color: #666; font-size: 13px; margin-bottom: 30px; transition: 0.3s; }
 
         .form-label { font-size: 13px; font-weight: 600; color: #444; }
         .form-control { border-radius: 10px; padding: 12px 15px; border: 1px solid #ddd; font-size: 14px; transition: 0.3s; }
@@ -69,6 +70,9 @@
         .btn-primary-custom { background: var(--primary); color: white; border: none; border-radius: 50px; padding: 12px; font-weight: 600; font-size: 15px; transition: 0.3s; width: 100%; }
         .btn-primary-custom:hover { background: #085ba8; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(10, 116, 218, 0.3); }
         .btn-primary-custom:disabled { background: #b0b0b0; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .toggle-mode-btn { transition: 0.3s; cursor: pointer; }
+        .toggle-mode-btn:hover { color: var(--primary) !important; }
     </style>
 </head>
 <body>
@@ -76,27 +80,38 @@
     <div class="floating-shape shape-1"></div>
     <div class="floating-shape shape-2"></div>
 
-    <div class="auth-card">
+    <div class="auth-card" id="authCard">
         <div class="brand-title">Healthy Secret 🌿</div>
-        <div class="brand-subtitle">Silakan isi data untuk masuk ke sistem Pre-Order.</div>
+        <div class="brand-subtitle" id="formSubtitle">Silakan isi data untuk masuk ke sistem Pre-Order.</div>
 
-        <form id="loginForm">
-            <div class="mb-3">
-                <label class="form-label">👤 Nama Lengkap</label>
-                <input type="text" id="userName" class="form-control" placeholder="Contoh: Budi Santoso" required>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label">📱 Nomor WhatsApp Aktif</label>
-                <input type="number" id="userPhone" class="form-control" placeholder="Contoh: 08123456789" required>
+        <form id="authForm">
+            <div id="userFields">
+                <div class="mb-3">
+                    <label class="form-label">👤 Nama Lengkap</label>
+                    <input type="text" id="userName" class="form-control" placeholder="Contoh: Budi Santoso">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">📱 Nomor WhatsApp Aktif</label>
+                    <input type="number" id="userPhone" class="form-control" placeholder="Contoh: 08123456789">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">📍 Alamat Pengiriman (Opsional)</label>
+                    <textarea id="userAddress" class="form-control" rows="2" placeholder="Masukkan alamat lengkap..."></textarea>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">📍 Alamat Pengiriman (Opsional)</label>
-                <textarea id="userAddress" class="form-control" rows="2" placeholder="Masukkan alamat lengkap..."></textarea>
+            <div id="adminFields" style="display: none;">
+                <div class="mb-3">
+                    <label class="form-label">👤 Username Admin</label>
+                    <input type="text" id="adminUser" class="form-control" placeholder="Ketik: admin">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">🔑 Password Admin</label>
+                    <input type="password" id="adminPass" class="form-control" placeholder="Ketik: medan2026">
+                </div>
             </div>
 
-            <label class="form-label">🛡️ Verifikasi Keamanan (Geser Puzzle)</label>
+            <label class="form-label mt-2">🛡️ Verifikasi Keamanan (Geser Puzzle)</label>
             <div class="captcha-container">
                 <div class="puzzle-box">
                     <canvas id="mainCanvas"></canvas>
@@ -110,9 +125,52 @@
 
             <button type="submit" id="submitBtn" class="btn-primary-custom" disabled>Kirim OTP ke WhatsApp ➜</button>
         </form>
+
+        <div class="text-center mt-4 border-top pt-3">
+            <a href="#" id="toggleModeBtn" class="text-muted text-decoration-none small fw-bold toggle-mode-btn">
+                🔒 Masuk sebagai Admin
+            </a>
+        </div>
     </div>
 
     <script>
+        // ==========================================
+        // 🔄 LOGIKA SWITCH MODE (USER / ADMIN)
+        // ==========================================
+        let currentMode = 'user'; // Status awal adalah user
+
+        document.getElementById('toggleModeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const userFields = document.getElementById('userFields');
+            const adminFields = document.getElementById('adminFields');
+            const submitBtn = document.getElementById('submitBtn');
+            const formSubtitle = document.getElementById('formSubtitle');
+
+            if(currentMode === 'user') {
+                // Beralih ke Admin
+                currentMode = 'admin';
+                userFields.style.display = 'none';
+                adminFields.style.display = 'block';
+                submitBtn.innerText = 'Login ke Dashboard Admin ➜';
+                submitBtn.style.backgroundColor = '#d4af37'; // Ganti warna tombol untuk admin
+                formSubtitle.innerText = 'Portal Keamanan Khusus Administrator.';
+                this.innerHTML = '👤 Kembali sebagai Pembeli';
+            } else {
+                // Beralih ke User
+                currentMode = 'user';
+                userFields.style.display = 'block';
+                adminFields.style.display = 'none';
+                submitBtn.innerText = 'Kirim OTP ke WhatsApp ➜';
+                submitBtn.style.backgroundColor = '#0a74da';
+                formSubtitle.innerText = 'Silakan isi data untuk masuk ke sistem Pre-Order.';
+                this.innerHTML = '🔒 Masuk sebagai Admin';
+            }
+            
+            // Wajib reset Captcha setiap ganti mode agar aman
+            initCaptcha();
+        });
+
         // ==========================================
         // 🧩 LOGIKA PUZZLE CAPTCHA
         // ==========================================
@@ -124,28 +182,24 @@
         const submitBtn = document.getElementById('submitBtn');
         const statusText = document.getElementById('captchaStatus');
 
-        let puzzleX = 0; // Koordinat asli lubang
+        let puzzleX = 0; 
         let puzzleY = 0;
         const pieceSize = 45;
         let isVerified = false;
 
         function initCaptcha() {
-            // Setup Ukuran
             mainCanvas.width = 320; mainCanvas.height = 150;
             pieceCanvas.width = 320; pieceCanvas.height = 150;
 
-            // Generate posisi acak untuk lubang (Harus di setengah kanan)
             puzzleX = Math.floor(Math.random() * 100) + 150; 
             puzzleY = Math.floor(Math.random() * 80) + 20;
 
-            // Gambar Background Pattern (Warna Tema Healthy Secret)
             let grad = mainCtx.createLinearGradient(0, 0, 320, 150);
             grad.addColorStop(0, "#0a74da");
             grad.addColorStop(1, "#d4af37");
             mainCtx.fillStyle = grad;
             mainCtx.fillRect(0, 0, 320, 150);
             
-            // Tambahkan corak ke background agar tidak polos
             mainCtx.fillStyle = "rgba(255, 255, 255, 0.1)";
             for(let i=0; i<20; i++) {
                 mainCtx.beginPath();
@@ -153,16 +207,13 @@
                 mainCtx.fill();
             }
 
-            // --- MENGGAMBAR POTONGAN PUZZLE ---
-            drawPuzzlePiece(mainCtx, puzzleX, puzzleY, "fill", "rgba(0,0,0,0.5)"); // Lubang Hitam
+            drawPuzzlePiece(mainCtx, puzzleX, puzzleY, "fill", "rgba(0,0,0,0.5)"); 
             
-            // Salin area asli dari main canvas untuk dijadikan potongan geser
             let pieceImgData = mainCtx.getImageData(puzzleX, puzzleY - 10, pieceSize + 15, pieceSize + 15);
             
             pieceCtx.clearRect(0, 0, 320, 150);
-            drawPuzzlePiece(pieceCtx, 10, puzzleY, "clip", ""); // Bentuk klip
+            drawPuzzlePiece(pieceCtx, 10, puzzleY, "clip", ""); 
             
-            // Gambar pola background ke dalam potongan puzzle
             let pieceGrad = pieceCtx.createLinearGradient(0, 0, 320, 150);
             pieceGrad.addColorStop(0, "#0a74da");
             pieceGrad.addColorStop(1, "#d4af37");
@@ -174,21 +225,21 @@
             
             slider.disabled = false;
             slider.value = 0;
+            pieceCanvas.style.transform = `translateX(0px)`;
             isVerified = false;
             submitBtn.disabled = true;
             statusText.innerText = "Tarik slider untuk mencocokkan puzzle";
             statusText.className = "captcha-status";
         }
 
-        // Fungsi menggambar bentuk puzzle (jigsaw sederhana)
         function drawPuzzlePiece(ctx, x, y, operation, color) {
             ctx.beginPath();
             ctx.moveTo(x, y);
             ctx.lineTo(x + pieceSize / 2 - 5, y);
-            ctx.arc(x + pieceSize / 2, y, 7, Math.PI, 0, false); // Benjolan atas
+            ctx.arc(x + pieceSize / 2, y, 7, Math.PI, 0, false); 
             ctx.lineTo(x + pieceSize, y);
             ctx.lineTo(x + pieceSize, y + pieceSize / 2 - 5);
-            ctx.arc(x + pieceSize, y + pieceSize / 2, 7, -Math.PI / 2, Math.PI / 2, false); // Benjolan kanan
+            ctx.arc(x + pieceSize, y + pieceSize / 2, 7, -Math.PI / 2, Math.PI / 2, false); 
             ctx.lineTo(x + pieceSize, y + pieceSize);
             ctx.lineTo(x, y + pieceSize);
             ctx.lineTo(x, y);
@@ -204,46 +255,35 @@
             }
         }
 
-        // Event Slider Digeser
         slider.addEventListener('input', function(e) {
             if(isVerified) return;
             let moveX = e.target.value;
-            // Geser canvas lapisan atas
             pieceCanvas.style.transform = `translateX(${moveX}px)`;
         });
 
-        // Event Saat Slider Dilepas (Validasi)
         slider.addEventListener('change', function(e) {
             if(isVerified) return;
-            let currentX = parseInt(e.target.value) + 10; // +10 karena potongan digambar di x=10
+            let currentX = parseInt(e.target.value) + 10; 
             
-            // Toleransi akurasi geser (5 pixel)
-            if (Math.abs(currentX - puzzleX) < 5) {
+            if (Math.abs(currentX - puzzleX) < 6) {
                 isVerified = true;
                 slider.disabled = true;
                 statusText.innerText = "✔ Verifikasi Berhasil!";
                 statusText.className = "captcha-status captcha-success";
-                submitBtn.disabled = false; // Buka kunci tombol Kirim OTP
+                submitBtn.disabled = false; 
             } else {
                 statusText.innerText = "❌ Posisi tidak pas! Coba lagi.";
                 statusText.className = "captcha-status captcha-fail";
-                // Kembalikan puzzle ke ujung kiri
-                setTimeout(() => {
-                    slider.value = 0;
-                    pieceCanvas.style.transform = `translateX(0px)`;
-                    statusText.innerText = "Tarik slider untuk mencocokkan puzzle";
-                    statusText.className = "captcha-status";
-                }, 800);
+                setTimeout(initCaptcha, 800);
             }
         });
 
-        // Muat puzzle saat halaman pertama kali dibuka
         window.onload = initCaptcha;
 
         // ==========================================
-        // 🔒 FORM SUBMISSION
+        // 🔒 FORM SUBMISSION (PENGIRIMAN DATA)
         // ==========================================
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('authForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             if(!isVerified) {
@@ -251,20 +291,40 @@
                 return;
             }
 
-            // Sanitasi Input sebelum disimpan (Anti-XSS Level Dasar)
-            const sanitize = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            
-            const data = {
-                name: sanitize(document.getElementById('userName').value),
-                phone: sanitize(document.getElementById('userPhone').value),
-                address: sanitize(document.getElementById('userAddress').value || "-")
-            };
+            if(currentMode === 'user') {
+                // LOGIKA LOGIN PEMBELI
+                const name = document.getElementById('userName').value;
+                const phone = document.getElementById('userPhone').value;
+                
+                if(!name || !phone) {
+                    alert("Nama dan Nomor WhatsApp wajib diisi!");
+                    return;
+                }
 
-            // Simpan ke sesi lokal
-            localStorage.setItem('hs_user_data', JSON.stringify(data));
-            
-            // Lanjut ke OTP
-            window.location.href = "otp.html";
+                const sanitize = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                const data = {
+                    name: sanitize(name),
+                    phone: sanitize(phone),
+                    address: sanitize(document.getElementById('userAddress').value || "-")
+                };
+
+                localStorage.setItem('hs_user_data', JSON.stringify(data));
+                window.location.href = "otp.html";
+
+            } else if(currentMode === 'admin') {
+                // LOGIKA LOGIN ADMIN
+                const u = document.getElementById('adminUser').value;
+                const p = document.getElementById('adminPass').value;
+                
+                if(u === "admin" && p === "medan2026") {
+                    localStorage.setItem('HS_AUTH', 'true');
+                    alert("Akses Diterima! Mengarahkan ke Dashboard Admin...");
+                    window.location.href = "admin.html";
+                } else {
+                    alert("Akses Ditolak! Username atau Password Admin salah.");
+                    initCaptcha(); // Wajib geser puzzle lagi jika gagal
+                }
+            }
         });
     </script>
 </body>
