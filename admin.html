@@ -19,7 +19,6 @@
         .btn-cyber { background: #3b82f6; border: none; font-weight: 600; color: white; padding: 8px 20px; border-radius: 8px; transition: 0.3s; }
         .btn-cyber:hover { background: #2563eb; }
         
-        /* Toggle Switch */
         .switch { position: relative; display: inline-block; width: 44px; height: 22px; margin: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .4s; border-radius: 34px; }
@@ -48,6 +47,19 @@
         <button class="btn btn-cyber" onclick="addMenu()">+ Tambah SKU Baru</button>
     </div>
 
+    <div class="glass-card mb-4 d-flex justify-content-between align-items-center" style="border-color: #d4af37;">
+        <div>
+            <h4 class="fw-bold m-0 text-warning">Status Batch Pre-Order</h4>
+            <p class="small text-secondary m-0">Gunakan sakelar ini untuk membuka/menutup seluruh PO di Website.</p>
+        </div>
+        <div>
+            <label class="switch" style="width: 60px; height: 30px;">
+                <input type="checkbox" id="batchToggle" onchange="toggleBatchStatus()">
+                <span class="slider" style="border-radius: 34px;"></span>
+            </label>
+        </div>
+    </div>
+
     <div class="glass-card">
         <table class="table table-hover">
             <thead>
@@ -65,15 +77,24 @@
 </div>
 
 <script>
-    // Proteksi Halaman
-    if(localStorage.getItem('HS_AUTH') !== 'true') window.location.href = 'login-admin.html';
+    if(localStorage.getItem('HS_AUTH') !== 'true') window.location.href = 'index.html';
 
     function logout() {
         localStorage.removeItem('HS_AUTH');
-        window.location.href = 'login-admin.html';
+        window.location.href = 'index.html';
     }
 
-    // DATABASE 7 MENU LENGKAP ASLI MILIK ANDA
+    // LOGIKA BATCH STATUS
+    let batchStatus = localStorage.getItem('HS_BATCH_STATUS') || 'OPEN';
+    document.getElementById('batchToggle').checked = (batchStatus === 'OPEN');
+
+    function toggleBatchStatus() {
+        const isChecked = document.getElementById('batchToggle').checked;
+        batchStatus = isChecked ? 'OPEN' : 'CLOSED';
+        localStorage.setItem('HS_BATCH_STATUS', batchStatus);
+        Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: `Batch PO ${batchStatus}!`, showConfirmButton: false, timer: 1500 });
+    }
+
     const defaultMenus = [
         { id: 1713250000001, name: 'Nasi Soto', price: 30000, stock: 15, img: 'Soto.jpeg', desc: 'Nasi putih, ayam suwir vegan (kedelai), bihun, tauge, kol, tomat.', active: true },
         { id: 1713250000002, name: 'Nasi Liwet', price: 30000, stock: 12, img: 'Liwet.jpeg', desc: 'Nasi gurih dimasak dengan santan & rempah pilihan, tempe orek.', active: true },
@@ -84,14 +105,10 @@
         { id: 1713250000007, name: 'Nasi Chasio', price: 25000, stock: 18, img: 'VeganChasio.jpeg', desc: 'Nasi putih hangat dengan irisan daging chasio vegan panggang madu.', active: true }
     ];
 
-    // Cek memori browser
     let menus = JSON.parse(localStorage.getItem('HS_MENU_DB')) || [];
-
-    // AUTO-RECOVERY: Jika menu di database kurang dari 7, kita paksa timpa dengan 7 data lengkap di atas!
     if (menus.length < 7) {
         menus = defaultMenus;
         localStorage.setItem('HS_MENU_DB', JSON.stringify(menus));
-        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Data Lengkap Berhasil Dipulihkan!', showConfirmButton: false, timer: 2000 });
     }
 
     function save() { 
