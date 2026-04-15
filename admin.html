@@ -19,12 +19,13 @@
         .btn-cyber { background: #3b82f6; border: none; font-weight: 600; color: white; padding: 8px 20px; border-radius: 8px; transition: 0.3s; }
         .btn-cyber:hover { background: #2563eb; }
         
-        .switch { position: relative; display: inline-block; width: 44px; height: 22px; margin: 0; }
+        /* PERBAIKAN CSS: Toggle Switch agar Bulat Sempurna dan Tidak Ngebug */
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; margin: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ef4444; transition: .4s; border-radius: 34px; box-shadow: inset 0 0 5px rgba(0,0,0,0.2); }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
         input:checked + .slider { background-color: #10b981; }
-        input:checked + .slider:before { transform: translateX(22px); }
+        input:checked + .slider:before { transform: translateX(24px); }
     </style>
 </head>
 <body>
@@ -50,12 +51,12 @@
     <div class="glass-card mb-4 d-flex justify-content-between align-items-center" style="border-color: #d4af37;">
         <div>
             <h4 class="fw-bold m-0 text-warning">Status Batch Pre-Order</h4>
-            <p class="small text-secondary m-0">Gunakan sakelar ini untuk membuka/menutup seluruh PO di Website.</p>
+            <p class="small text-secondary m-0">Aktifkan sakelar ini untuk menentukan tanggal tutup PO dan membuka pesanan.</p>
         </div>
         <div>
-            <label class="switch" style="width: 60px; height: 30px;">
+            <label class="switch">
                 <input type="checkbox" id="batchToggle" onchange="toggleBatchStatus()">
-                <span class="slider" style="border-radius: 34px;"></span>
+                <span class="slider"></span>
             </label>
         </div>
     </div>
@@ -67,7 +68,7 @@
                     <th>Item & Deskripsi</th>
                     <th>Harga</th>
                     <th>Stok</th>
-                    <th>Tersedia (Buka PO)</th>
+                    <th>Tersedia (Status Menu)</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -84,15 +85,66 @@
         window.location.href = 'index.html';
     }
 
-    // LOGIKA BATCH STATUS
-    let batchStatus = localStorage.getItem('HS_BATCH_STATUS') || 'OPEN';
+    // =========================================================
+    // FITUR BARU: LOGIKA BACA & TULIS BATCH STATUS + TANGGAL PO
+    // =========================================================
+    let batchStatus = localStorage.getItem('HS_BATCH_STATUS') || 'CLOSED';
     document.getElementById('batchToggle').checked = (batchStatus === 'OPEN');
 
-    function toggleBatchStatus() {
-        const isChecked = document.getElementById('batchToggle').checked;
-        batchStatus = isChecked ? 'OPEN' : 'CLOSED';
-        localStorage.setItem('HS_BATCH_STATUS', batchStatus);
-        Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: `Batch PO ${batchStatus}!`, showConfirmButton: false, timer: 1500 });
+    async function toggleBatchStatus() {
+        const toggle = document.getElementById('batchToggle');
+        const isChecked = toggle.checked;
+
+        if (isChecked) {
+            // Jika Admin menyalakan (OPEN BATCH), Minta Input Tanggal!
+            const { value: formValues } = await Swal.fire({
+                title: 'Buka Batch PO Baru',
+                background: '#1e293b', color: '#fff',
+                html: `
+                    <div class="text-start mb-2">
+                        <label class="small text-secondary">Kapan PO ini akan ditutup secara otomatis?</label>
+                        <input id="swal-close-date" type="datetime-local" class="swal2-input m-0 w-100">
+                    </div>
+                    <div class="text-start mt-3">
+                        <label class="small text-secondary">Teks Estimasi Pengiriman (Akan tampil di Web)</label>
+                        <input id="swal-delivery-text" type="text" class="swal2-input m-0 w-100" placeholder="Contoh: Selasa, 13 Maret 2026">
+                    </div>
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'Buka Batch Sekarang',
+                cancelButtonText: 'Batal',
+                preConfirm: () => {
+                    const closeDate = document.getElementById('swal-close-date').value;
+                    const deliveryText = document.getElementById('swal-delivery-text').value;
+                    if (!closeDate || !deliveryText) {
+                        Swal.showValidationMessage('Harap isi Tanggal Tutup dan Teks Pengiriman!');
+                        return false;
+                    }
+                    return { closeDate, deliveryText };
+                }
+            });
+
+            if (formValues) {
+                // Simpan Konfigurasi Tanggal ke LocalStorage agar dibaca main.html
+                const newConfig = {
+                    closeDate: formValues.closeDate, 
+                    deliveryText: formValues.deliveryText,
+                    waNumber: "62818895488" 
+                };
+                localStorage.setItem('HS_PO_CONFIG', JSON.stringify(newConfig));
+                localStorage.setItem('HS_BATCH_STATUS', 'OPEN');
+                
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Batch PO Dibuka!', showConfirmButton: false, timer: 1500 });
+            } else {
+                // Jika admin menekan batal, kembalikan sakelar ke posisi OFF
+                toggle.checked = false;
+            }
+        } else {
+            // Jika Admin mematikan (CLOSE BATCH)
+            localStorage.setItem('HS_BATCH_STATUS', 'CLOSED');
+            Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Batch PO Ditutup Paksa!', showConfirmButton: false, timer: 1500 });
+        }
     }
 
     const defaultMenus = [
@@ -153,7 +205,7 @@
     window.toggleAvail = (i) => {
         menus[i].active = !menus[i].active;
         save();
-        const status = menus[i].active ? 'Tersedia' : 'Sold Out';
+        const status = menus[i].active ? 'Aktif' : 'Disembunyikan';
         Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: `${menus[i].name} menjadi ${status}`, showConfirmButton: false, timer: 1500 });
     };
 
