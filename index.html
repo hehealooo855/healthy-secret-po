@@ -12,6 +12,8 @@
             --accent: #d4af37;    
             --light-bg: #f9fbfd;
         }
+        
+        /* PERBAIKAN UI (OPSI 1A): Menghapus overflow: hidden dan menambahkan padding */
         body { 
             background-color: var(--light-bg); 
             font-family: 'Poppins', sans-serif; 
@@ -21,11 +23,14 @@
             justify-content: center; 
             margin: 0; 
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto; /* Membuka kunci scroll vertikal */
+            padding: 40px 20px; /* Memberi ruang agar card tidak mentok pinggir layar */
+            box-sizing: border-box;
         }
         
         /* Efek Latar Belakang Mewah */
-        .floating-shape { position: absolute; border-radius: 50%; filter: blur(80px); z-index: 1; opacity: 0.5; animation: float 10s infinite alternate; }
+        .floating-shape { position: fixed; border-radius: 50%; filter: blur(80px); z-index: 1; opacity: 0.5; animation: float 10s infinite alternate; pointer-events: none; }
         .shape-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(212, 175, 55, 0.2); }
         .shape-2 { bottom: -10%; right: -5%; width: 400px; height: 400px; background: rgba(10, 116, 218, 0.15); }
         @keyframes float { 0% { transform: translateY(0); } 100% { transform: translateY(30px); } }
@@ -42,6 +47,7 @@
             z-index: 10;
             border: 1px solid rgba(255,255,255,0.5);
             transition: all 0.3s ease;
+            margin: auto; /* Menjaga di tengah jika layar sangat tinggi */
         }
 
         .brand-title { font-family: 'Playfair Display', serif; color: var(--primary); font-weight: 700; font-size: 2rem; text-align: center; margin-bottom: 5px; }
@@ -153,7 +159,7 @@
                 userFields.style.display = 'none';
                 adminFields.style.display = 'block';
                 submitBtn.innerText = 'Login ke Dashboard Admin ➜';
-                submitBtn.style.backgroundColor = '#d4af37'; // Ganti warna tombol untuk admin
+                submitBtn.style.backgroundColor = '#d4af37'; 
                 formSubtitle.innerText = 'Portal Keamanan Khusus Administrator.';
                 this.innerHTML = '👤 Kembali sebagai Pembeli';
             } else {
