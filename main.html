@@ -341,41 +341,6 @@
       <button id="btnLeft" style="padding:10px 14px; border-radius:8px; border:none; background:#0a74da; color:#fff; cursor:pointer; font-size:18px;">←</button>
 
       <div id="menuScroll">
-        <div class="slide">
-          <img src="Soto.jpeg" onerror="this.src='https://placehold.co/400x300?text=Nasi+Soto'" alt="Nasi Soto">
-          <h3>Nasi Soto</h3> <p>Rp 30.000</p>
-          <button class="card-btn" onclick="scrollToMenu('target-soto')">Lihat Detail ➜</button>
-        </div>
-        <div class="slide">
-          <img src="Liwet.jpeg" onerror="this.src='https://placehold.co/400x300?text=Nasi+Liwet'" alt="Nasi Liwet">
-          <h3>Nasi Liwet</h3> <p>Rp 30.000</p>
-          <button class="card-btn" onclick="scrollToMenu('target-liwet')">Lihat Detail ➜</button>
-        </div>
-        <div class="slide">
-          <img src="Misop.jpeg" onerror="this.src='https://placehold.co/400x300?text=Mie+Sop'" alt="Mie Sop">
-          <h3>Mie Sop</h3> <p>Rp 25.000</p>
-          <button class="card-btn" onclick="scrollToMenu('target-misop')">Lihat Detail ➜</button>
-        </div>
-        <div class="slide">
-          <img src="NasiBakar.jpeg" onerror="this.src='https://placehold.co/400x300?text=Nasi+Bakar'" alt="Nasi Bakar">
-          <h3>Nasi Bakar</h3> <p>Rp 25.000</p>
-          <button class="card-btn" onclick="scrollToMenu('target-bakar')">Lihat Detail ➜</button>
-        </div>
-        <div class="slide">
-          <img src="Onigiri.jpeg" onerror="this.src='https://placehold.co/400x300?text=Onigiri'" alt="Onigiri">
-          <h3>Onigiri</h3> <p>Rp 18.000</p>
-          <button class="card-btn" onclick="scrollToMenu('target-onigiri')">Lihat Detail ➜</button>
-        </div>
-        <div class="slide">
-          <img src="Takoyaki.jpeg" onerror="this.src='https://placehold.co/400x300?text=Takoyaki'" alt="Takoyaki">
-          <h3>Takoyaki</h3> <p>Rp 40.000</p>
-          <button class="card-btn" onclick="scrollToMenu('target-takoyaki')">Lihat Detail ➜</button>
-        </div>
-        <div class="slide">
-          <img src="VeganChasio.jpeg" onerror="this.src='https://placehold.co/400x300?text=Nasi+Chasio'" alt="Nasi Chasio">
-          <h3>Nasi Chasio</h3> <p>Rp 25.000</p>
-          <button class="card-btn" onclick="scrollToMenu('target-chasio')">Lihat Detail ➜</button>
-        </div>
       </div>
 
       <button id="btnRight" style="padding:10px 14px; border-radius:8px; border:none; background:#0a74da; color:#fff; cursor:pointer; font-size:18px;">→</button>
@@ -402,155 +367,7 @@
       Pengiriman: <b style="color:var(--primary)" id="deliveryDateTarget">...</b>
     </p>
     
-    <div class="menu-grid">
-      
-      <div class="menu-card" id="target-soto" data-open="true" data-aos="fade-up">
-        <span class="status-badge"></span>
-        <img src="Soto.jpeg" onerror="this.src='https://placehold.co/400x300?text=Nasi+Soto'" alt="Nasi Soto">
-        <div class="card-body">
-          <h3>Nasi Soto</h3> <span class="price">Rp 30.000</span>
-          
-          <button class="btn-overview overview-btn" 
-                  data-name="Nasi Soto"
-                  data-komposisi="Nasi putih, ayam suwir vegan (kedelai), bihun, tauge, kol, tomat, dan kuah soto kuning kaya rempah tanpa santan."
-                  data-testi="&quot;Kuahnya segar banget, beneran gak kerasa kalau ini vegan!&quot; - Rina M."
-                  data-stok="15">
-            Overview
-          </button>
-          
-          <div class="action-row">
-            <input type="number" id="qty-soto" class="qty-input" value="1" min="1">
-            <button class="btn-pesan" onclick="addToCart('Nasi Soto', 30000, 'qty-soto')">+ Pre-Order</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="menu-card" id="target-liwet" data-open="false" data-aos="fade-up" data-aos-delay="100">
-        <span class="status-badge"></span>
-        <img src="Liwet.jpeg" onerror="this.src='https://placehold.co/400x300?text=Nasi+Liwet'" alt="Nasi Liwet">
-        <div class="card-body">
-          <h3>Nasi Liwet</h3> <span class="price">Rp 30.000</span>
-          
-          <button class="btn-overview overview-btn" 
-                  data-name="Nasi Liwet"
-                  data-komposisi="Nasi gurih dimasak dengan santan & rempah pilihan, tempe orek, ikan asin nabati, sambal terasi vegan, dan lalapan segar."
-                  data-testi="&quot;Wanginya luar biasa, comfort food banget buat makan siang.&quot; - Andi T."
-                  data-stok="12">
-            Overview
-          </button>
-          
-          <div class="action-row">
-            <input type="number" id="qty-liwet" class="qty-input" value="1" min="1">
-            <button class="btn-pesan" onclick="addToCart('Nasi Liwet', 30000, 'qty-liwet')">+ Pre-Order</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="menu-card" id="target-misop" data-open="true" data-aos="fade-up" data-aos-delay="200">
-        <span class="status-badge"></span>
-        <img src="Misop.jpeg" onerror="this.src='https://placehold.co/400x300?text=Mie+Sop'" alt="Mie Sop">
-        <div class="card-body">
-          <h3>Mie Sop Medan</h3> <span class="price">Rp 25.000</span>
-          
-          <button class="btn-overview overview-btn" 
-                  data-name="Mie Sop Medan"
-                  data-komposisi="Mie kuning, bihun, bakso jamur kenyal, tahu potong dadu, disiram kuah kaldu rempah kapulaga & kayu manis khas Medan."
-                  data-testi="&quot;Rasa rempahnya otentik Medan banget, bakso jamurnya kenyal banget!&quot; - Sarah"
-                  data-stok="0">
-            Overview
-          </button>
-          
-          <div class="action-row">
-            <input type="number" id="qty-misop" class="qty-input" value="1" min="1">
-            <button class="btn-pesan" onclick="addToCart('Mie Sop', 25000, 'qty-misop')">+ Pre-Order</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="menu-card" id="target-bakar" data-open="false" data-aos="fade-up">
-        <span class="status-badge"></span>
-        <img src="NasiBakar.jpeg" onerror="this.src='https://placehold.co/400x300?text=Nasi+Bakar'" alt="Nasi Bakar">
-        <div class="card-body">
-          <h3>Nasi Bakar</h3> <span class="price">Rp 25.000</span>
-          
-          <button class="btn-overview overview-btn" 
-                  data-name="Nasi Bakar"
-                  data-komposisi="Nasi gurih berbumbu rempah, isian jamur suwir pedas, kemangi segar, dibungkus daun pisang lalu dipanggang."
-                  data-testi="&quot;Aroma daun pisang bakarnya bikin nagih, isian jamurnya melimpah!&quot; - Dodi"
-                  data-stok="10">
-            Overview
-          </button>
-          
-          <div class="action-row">
-            <input type="number" id="qty-bakar" class="qty-input" value="1" min="1">
-            <button class="btn-pesan" onclick="addToCart('Nasi Bakar', 25000, 'qty-bakar')">+ Pre-Order</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="menu-card" id="target-onigiri" data-open="true" data-aos="fade-up" data-aos-delay="100">
-        <span class="status-badge"></span>
-        <img src="Onigiri.jpeg" onerror="this.src='https://placehold.co/400x300?text=Onigiri'" alt="Onigiri">
-        <div class="card-body">
-          <h3>Onigiri</h3> <span class="price">Rp 18.000</span>
-          
-          <button class="btn-overview overview-btn" 
-                  data-name="Onigiri"
-                  data-komposisi="Nasi kepal ala Jepang menggunakan beras premium, dibalut nori renyah, dengan isian tuna nabati mayo khas Healthy Secret."
-                  data-testi="&quot;Paling pas buat sarapan cepat di jalan, isiannya full banget!&quot; - Jessica"
-                  data-stok="30">
-            Overview
-          </button>
-          
-          <div class="action-row">
-            <input type="number" id="qty-onigiri" class="qty-input" value="1" min="1">
-            <button class="btn-pesan" onclick="addToCart('Onigiri', 18000, 'qty-onigiri')">+ Pre-Order</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="menu-card" id="target-takoyaki" data-open="false" data-aos="fade-up" data-aos-delay="200">
-        <span class="status-badge"></span>
-        <img src="Takoyaki.jpeg" onerror="this.src='https://placehold.co/400x300?text=Takoyaki'" alt="Takoyaki">
-        <div class="card-body">
-          <h3>Takoyaki</h3> <span class="price">Rp 40.000</span>
-          
-          <button class="btn-overview overview-btn" 
-                  data-name="Takoyaki"
-                  data-komposisi="Bola-bola tepung ala Jepang yang lembut, berisi potongan gurita vegan (konyaku), disiram saus takoyaki, vegan mayo, dan aonori."
-                  data-testi="&quot;Gak nyangka versi vegannya bisa seenak dan semirip ini sama aslinya.&quot; - Kevin"
-                  data-stok="25">
-            Overview
-          </button>
-          
-          <div class="action-row">
-            <input type="number" id="qty-takoyaki" class="qty-input" value="1" min="1">
-            <button class="btn-pesan" onclick="addToCart('Takoyaki', 40000, 'qty-takoyaki')">+ Pre-Order</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="menu-card" id="target-chasio" data-open="true" data-aos="fade-up">
-        <span class="status-badge"></span>
-        <img src="VeganChasio.jpeg" onerror="this.src='https://placehold.co/400x300?text=Nasi+Chasio'" alt="Nasi Chasio">
-        <div class="card-body">
-          <h3>Nasi Chasio</h3> <span class="price">Rp 25.000</span>
-          
-          <button class="btn-overview overview-btn" 
-                  data-name="Nasi Chasio"
-                  data-komposisi="Nasi putih hangat dengan topping irisan daging chasio vegan (terbuat dari gluten) yang dipanggang dengan madu dan saus manis gurih."
-                  data-testi="&quot;Tekstur chasionya dapet banget, bumbu manis gurihnya pas di lidah.&quot; - Lina"
-                  data-stok="18">
-            Overview
-          </button>
-          
-          <div class="action-row">
-            <input type="number" id="qty-chasio" class="qty-input" value="1" min="1">
-            <button class="btn-pesan" onclick="addToCart('Nasi Chasio', 25000, 'qty-chasio')">+ Pre-Order</button>
-          </div>
-        </div>
-      </div>
-
+    <div class="menu-grid" id="main-sku-container">
     </div>
   </section>
 
@@ -665,11 +482,9 @@
     // 🔧 LOGIC SYSTEM & DYNAMIC INVENTORY
     // ==========================================
     
-    // VARIABEL GLOBAL UNTUK MENYIMPAN STOK
     let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-    let INVENTORY = {};
+    let DATABASE_MENU = []; // Menggantikan INVENTORY lama yang static
 
-    // 1. HELPER: Toast Notification (Pengganti Alert)
     function showToast(message) {
         const container = document.getElementById('toast-container');
         const el = document.createElement('div');
@@ -679,13 +494,11 @@
         setTimeout(() => el.remove(), 3500);
     }
 
-    // 2. INIT & PO LOGIC
+    // INIT LOAD
     window.addEventListener("load", function() {
-      // Hilangkan Preloader
       document.getElementById('preloader').style.opacity = '0';
       setTimeout(() => { document.getElementById('preloader').style.display = 'none'; }, 500);
       
-      // TAMBAHAN: Tarik Data User dari Halaman OTP agar form terisi otomatis
       const userData = JSON.parse(localStorage.getItem('hs_user_data'));
       if(userData) {
           const bName = document.getElementById('buyer-name');
@@ -694,37 +507,98 @@
           if(bAddress) bAddress.value = userData.address;
       }
 
-      // BUILD INVENTORY DATABASE DARI HTML SAAT HALAMAN DIMUAT
-      document.querySelectorAll('.overview-btn').forEach(btn => {
-          let name = btn.getAttribute('data-name');
-          let stok = parseInt(btn.getAttribute('data-stok'));
-          INVENTORY[name] = stok;
-      });
-
-      // Init Animations
+      loadData(); // Memanggil Data Dinamis Admin
+      
       AOS.init({ duration: 1000, once: true, offset: 100 });
-      
       updateDeliveryInfo();
-      startCountdown();    
-      checkPOStatus();      
-      
+      startCountdown();          
       updateCartUI();
     });
+
+    // FUNGSI UTAMA 1: Tarik data dari Database LocalStorage buatan Admin
+    function loadData() {
+        const stored = localStorage.getItem('HS_MENU_DB');
+        if(stored) {
+            DATABASE_MENU = JSON.parse(stored);
+        } else {
+            // Data Default Asli Milik Anda (Fallback jika belum login admin)
+            DATABASE_MENU = [
+                { id: 'soto', name: 'Nasi Soto', price: 30000, stock: 15, img: 'Soto.jpeg', desc: 'Nasi putih, ayam suwir vegan (kedelai), bihun, tauge, kol, tomat.', active: true },
+                { id: 'liwet', name: 'Nasi Liwet', price: 30000, stock: 12, img: 'Liwet.jpeg', desc: 'Nasi gurih dimasak dengan santan & rempah pilihan, tempe orek.', active: false },
+                { id: 'misop', name: 'Mie Sop Medan', price: 25000, stock: 20, img: 'Misop.jpeg', desc: 'Mie kuning, bihun, bakso jamur kenyal, tahu potong dadu.', active: true },
+                { id: 'bakar', name: 'Nasi Bakar', price: 25000, stock: 10, img: 'NasiBakar.jpeg', desc: 'Nasi gurih berbumbu rempah, isian jamur suwir pedas, kemangi segar.', active: false },
+                { id: 'onigiri', name: 'Onigiri', price: 18000, stock: 30, img: 'Onigiri.jpeg', desc: 'Nasi kepal ala Jepang menggunakan beras premium, dibalut nori renyah.', active: true },
+                { id: 'takoyaki', name: 'Takoyaki', price: 40000, stock: 25, img: 'Takoyaki.jpeg', desc: 'Bola-bola tepung ala Jepang yang lembut, berisi potongan gurita vegan.', active: false },
+                { id: 'chasio', name: 'Nasi Chasio', price: 25000, stock: 18, img: 'VeganChasio.jpeg', desc: 'Nasi putih hangat dengan irisan daging chasio vegan panggang madu.', active: true }
+            ];
+            localStorage.setItem('HS_MENU_DB', JSON.stringify(DATABASE_MENU));
+        }
+        
+        renderHighlights(); // Render Slider Atas
+        renderMainCatalog(); // Render Kartu Bawah
+    }
+
+    // FUNGSI UTAMA 2: Menggambar Slider Highlight secara dinamis
+    function renderHighlights() {
+        const highlightContainer = document.getElementById('menuScroll');
+        highlightContainer.innerHTML = DATABASE_MENU.map(m => `
+            <div class="slide">
+              <img src="${m.img}" onerror="this.src='https://placehold.co/400x300?text=Image'" alt="${m.name}">
+              <h3>${m.name}</h3> <p>Rp ${parseInt(m.price).toLocaleString('id-ID')}</p>
+              <button class="card-btn" onclick="scrollToMenu('target-${m.id}')">Lihat Detail ➜</button>
+            </div>
+        `).join('');
+    }
+
+    // FUNGSI UTAMA 3: Menggambar Kartu Menu Makanan secara dinamis
+    function renderMainCatalog() {
+        const grid = document.getElementById('main-sku-container');
+        
+        const now = new Date().getTime();
+        const deadline = new Date(PO_CONFIG.closeDate).getTime();
+        const isTimeOver = now >= deadline;
+
+        grid.innerHTML = DATABASE_MENU.map((m, idx) => {
+            const isManualOpen = m.active;
+            const isCardClosed = isTimeOver || !isManualOpen || m.stock <= 0;
+            
+            const badgeClass = isCardClosed ? 'badge-closed' : 'badge-open';
+            const badgeText = isCardClosed ? (isTimeOver ? 'CLOSED' : 'HABIS / CLOSED') : 'OPEN PO';
+            const cardClass = isCardClosed ? 'closed' : '';
+            const btnState = isCardClosed ? 'disabled' : '';
+            const btnText = isCardClosed ? (isTimeOver ? "PO Ditutup" : "Tidak Tersedia") : "+ Pre-Order";
+
+            return `
+            <div class="menu-card ${cardClass}" id="target-${m.id}" data-aos="fade-up" data-aos-delay="${(idx % 3) * 100}">
+                <span class="status-badge ${badgeClass}">${badgeText}</span>
+                <img src="${m.img}" onerror="this.src='https://placehold.co/400x300?text=Food'">
+                <div class="card-body">
+                    <h3>${m.name}</h3> <span class="price">Rp ${parseInt(m.price).toLocaleString('id-ID')}</span>
+                    <button class="btn-overview overview-btn" onclick="window.openOverviewDinamis('${m.id}')">
+                        Overview
+                    </button>
+                    <div class="action-row">
+                        <input type="number" id="qty-${m.id}" class="qty-input" value="1" min="1" ${btnState}>
+                        <button class="btn-pesan" onclick="addToCart('${m.id}')" ${btnState}>${btnText}</button>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
 
     function updateDeliveryInfo() {
       document.getElementById('deliveryDate').innerText = PO_CONFIG.deliveryText;
       document.getElementById('deliveryDateTarget').innerText = PO_CONFIG.deliveryText;
     }
 
-    // FUNGSI UNTUK MENGHITUNG SISA STOK REAL-TIME
-    function getAvailableStock(name) {
-        let initialStok = INVENTORY[name] || 0;
-        let itemInCart = cart.find(i => i.name === name);
+    function getAvailableStock(id) {
+        let item = DATABASE_MENU.find(m => m.id == id);
+        let initialStok = item ? item.stock : 0;
+        let itemInCart = cart.find(i => i.id == id);
         let inCartQty = itemInCart ? itemInCart.qty : 0;
         return initialStok - inCartQty;
     }
 
-    // 3. COUNTDOWN TIMER
     function startCountdown() {
       const deadline = new Date(PO_CONFIG.closeDate).getTime();
 
@@ -736,7 +610,7 @@
             clearInterval(timer);
             document.getElementById('countdown').innerHTML = "<span style='color:#ff6b6b; font-weight:bold;'>PO DITUTUP</span>";
             document.getElementById('banner-text').innerText = "🚫 BATCH CLOSED";
-            checkPOStatus(); 
+            renderMainCatalog(); // Re-render untuk menutup tombol
             return;
         }
 
@@ -752,49 +626,12 @@
       }, 1000);
     }
 
-    // 4. CEK STATUS MENU
-    function checkPOStatus() {
-      const now = new Date().getTime();
-      const deadline = new Date(PO_CONFIG.closeDate).getTime();
-      const isTimeOver = now >= deadline; 
-
-      const cards = document.querySelectorAll('.menu-card');
-      cards.forEach(card => {
-        const isManualOpen = card.getAttribute('data-open') === 'true';
-        const badge = card.querySelector('.status-badge');
-        const btn = card.querySelector('.btn-pesan');
-        const input = card.querySelector('.qty-input');
-
-        if (isTimeOver || !isManualOpen) {
-          card.classList.add('closed'); 
-          badge.innerText = "CLOSED";
-          badge.classList.remove("badge-open");
-          badge.classList.add("badge-closed");
-          
-          btn.innerText = isTimeOver ? "PO Ditutup" : "Tidak Tersedia";
-          btn.disabled = true;
-          if(input) input.disabled = true;
-        } else {
-          card.classList.remove('closed');
-          badge.innerText = "OPEN PO";
-          badge.classList.add("badge-open");
-          badge.classList.remove("badge-closed");
-          
-          btn.innerText = "+ Pre-Order";
-          btn.disabled = false;
-          if(input) input.disabled = false;
-        }
-      });
-    }
-
-    // 5. NAVBAR SCROLL
     window.addEventListener('scroll', function() {
       const navbar = document.querySelector('.navbar');
       if (window.scrollY > 50) navbar.classList.add('scrolled');
       else navbar.classList.remove('scrolled');
     });
 
-    // 6. HERO SLIDER AUTO
     let heroIndex = 0;
     const heroImages = document.querySelectorAll('.slide-img');
     if(heroImages.length > 0) {
@@ -806,7 +643,6 @@
         setInterval(heroSlider, 4000); heroSlider();
     }
 
-    // 7. SCROLL TO MENU
     function scrollToMenu(elementId) {
       const element = document.getElementById(elementId);
       if (element) {
@@ -819,25 +655,21 @@
     }
 
     // ==========================================
-    // 8. LOGIKA OVERVIEW POPUP & STOK REAL-TIME
+    // 8. LOGIKA OVERVIEW POPUP DINAMIS
     // ==========================================
-    document.querySelectorAll('.overview-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const name = btn.getAttribute('data-name');
-        const komposisi = btn.getAttribute('data-komposisi');
-        const testi = btn.getAttribute('data-testi');
+    window.openOverviewDinamis = function(id) {
+        const m = DATABASE_MENU.find(x => x.id == id);
+        if(!m) return;
         
-        // Menarik data sisa stok yang telah dikalkulasi
-        const currentStok = getAvailableStock(name);
+        const currentStok = getAvailableStock(m.id);
 
-        document.getElementById('popupTitle').innerText = name;
-        document.getElementById('popupKomposisi').innerText = komposisi;
-        document.getElementById('popupTesti').innerHTML = testi;
+        document.getElementById('popupTitle').innerText = m.name;
+        document.getElementById('popupKomposisi').innerText = m.desc || "Belum ada deskripsi.";
+        document.getElementById('popupTesti').innerHTML = "Belum ada ulasan untuk menu ini.";
         document.getElementById('popupStok').innerText = currentStok + " Pcs";
 
         document.getElementById('popup').style.display = 'block';
-      });
-    });
+    };
 
     function closePopup() { 
         document.getElementById('popup').style.display = 'none'; 
@@ -848,15 +680,11 @@
         localStorage.setItem('shoppingCart', JSON.stringify(cart));
     }
 
-    function addToCart(name, price, qtyId) {
-      const now = new Date().getTime();
-      const deadline = new Date(PO_CONFIG.closeDate).getTime();
-      if(now >= deadline) {
-          showToast("❌ Maaf, Periode PO sudah ditutup!");
-          return;
-      }
+    function addToCart(id) {
+      const item = DATABASE_MENU.find(m => m.id == id);
+      if(!item) return;
 
-      const qtyInput = document.getElementById(qtyId);
+      const qtyInput = document.getElementById(`qty-${id}`);
       let qty = parseInt(qtyInput.value);
       
       if(isNaN(qty) || qty < 1) {
@@ -864,26 +692,23 @@
         return;
       }
 
-      // ===============================================
-      // FITUR BARU: PROTEKSI OVERSELLING STOK REAL-TIME
-      // ===============================================
-      const availableStok = getAvailableStock(name);
+      const availableStok = getAvailableStock(id);
       if (qty > availableStok) {
-          showToast(`❌ Gagal! Sisa stok ${name} hanya ${availableStok} Pcs.`);
-          return; // Menghentikan eksekusi jika stok tidak cukup
+          showToast(`❌ Gagal! Sisa stok ${item.name} hanya ${availableStok} Pcs.`);
+          return; 
       }
 
-      const existingItem = cart.find(item => item.name === name);
+      const existingItem = cart.find(i => i.id == id);
       
       if (existingItem) {
         existingItem.qty += qty; 
       } else {
-        cart.push({ name: name, price: price, qty: qty }); 
+        cart.push({ id: item.id, name: item.name, price: item.price, qty: qty }); 
       }
 
       saveCart(); 
       updateCartUI();
-      showToast(`${name} (${qty}x) masuk Keranjang!`);
+      showToast(`✅ ${item.name} (${qty}x) masuk Keranjang!`);
       qtyInput.value = 1;
     }
 
@@ -905,7 +730,7 @@
             <div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding:10px 0;">
               <div>
                 <div style="font-weight:600;">${item.name}</div>
-                <div style="font-size:13px; color:#555;">${item.qty} x Rp ${item.price.toLocaleString('id-ID')}</div>
+                <div style="font-size:13px; color:#555;">${item.qty} x Rp ${parseInt(item.price).toLocaleString('id-ID')}</div>
               </div>
               <div style="display:flex; align-items:center; gap:10px;">
                 <span style="font-weight:bold;">Rp ${subtotal.toLocaleString('id-ID')}</span>
@@ -1077,6 +902,11 @@
             initCaptcha();
         }
     }
+
+    // MENDENGARKAN PERUBAHAN DATA DARI ADMIN
+    window.addEventListener('storage', (e) => { 
+        if (e.key === 'HS_MENU_DB') loadData(); 
+    });
   </script>
 
 </body>
