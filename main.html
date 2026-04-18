@@ -37,10 +37,10 @@
     
     html { scroll-behavior: smooth; }
 
-    /* TOAST NOTIFICATION (PENGGANTI ALERT) */
+    /* TOAST NOTIFICATION (PENGGANTI ALERT) - DIPINDAHKAN KE ATAS */
     #toast-container {
         position: fixed;
-        bottom: 30px;
+        top: 90px; 
         left: 50%;
         transform: translateX(-50%);
         z-index: 10000;
@@ -61,7 +61,7 @@
         gap: 8px;
     }
     @keyframes fadeInOut {
-        0% { opacity: 0; transform: translateY(20px); }
+        0% { opacity: 0; transform: translateY(-20px); }
         15% { opacity: 1; transform: translateY(0); }
         85% { opacity: 1; transform: translateY(0); }
         100% { opacity: 0; transform: translateY(-20px); }
@@ -653,7 +653,6 @@
     // ==========================================
     // ⚙️ PUSAT KONTROL TOKO DINAMIS 
     // ==========================================
-    // MENGAMBIL KONFIG DARI ADMIN, BUKAN HARDCODE LAGI
     function getPOConfig() {
         const saved = JSON.parse(localStorage.getItem('HS_PO_CONFIG'));
         return saved || {
@@ -668,12 +667,10 @@
     // 🔧 LOGIC SYSTEM & DYNAMIC INVENTORY
     // ==========================================
     
-    // VARIABEL GLOBAL UNTUK MENYIMPAN STOK
     let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
     let INVENTORY = {};
-    let DATABASE_MENU = []; // Untuk menyimpan referensi data Admin
+    let DATABASE_MENU = []; 
 
-    // 1. HELPER: Toast Notification 
     function showToast(message) {
         const container = document.getElementById('toast-container');
         const el = document.createElement('div');
@@ -683,7 +680,6 @@
         setTimeout(() => el.remove(), 3500);
     }
 
-    // 2. INIT & PO LOGIC
     window.addEventListener("load", function() {
       document.getElementById('preloader').style.opacity = '0';
       setTimeout(() => { document.getElementById('preloader').style.display = 'none'; }, 500);
@@ -696,7 +692,7 @@
           if(bAddress) bAddress.value = userData.address;
       }
 
-      loadData(); // Menarik data Admin dan Menimpa HTML secara otomatis
+      loadData(); 
       
       AOS.init({ duration: 1000, once: true, offset: 100 });
       updateDeliveryInfo();
@@ -705,15 +701,11 @@
       updateCartUI();
     });
 
-    // ==============================================================
-    // 🚀 FITUR BARU: AUTO-SYNC HTML DENGAN DATABASE ADMIN
-    // ==============================================================
     function loadData() {
         const stored = localStorage.getItem('HS_MENU_DB');
         if(stored) {
             DATABASE_MENU = JSON.parse(stored);
         } else {
-            // Data Default Jika Admin Belum Pernah Buka
             DATABASE_MENU = [
                 { name: 'Nasi Soto', price: 30000, stock: 15, desc: 'Nasi putih, ayam suwir vegan...', active: true },
                 { name: 'Nasi Liwet', price: 30000, stock: 12, desc: 'Nasi gurih dimasak dengan santan...', active: true },
@@ -726,49 +718,40 @@
             localStorage.setItem('HS_MENU_DB', JSON.stringify(DATABASE_MENU));
         }
 
-        // Jalankan Injeksi Data ke Elemen HTML
         syncHTMLWithDatabase();
     }
 
     function syncHTMLWithDatabase() {
-        // 1. Update Grid Kartu Menu Utama
         const cards = document.querySelectorAll('.menu-card');
         cards.forEach(card => {
             const titleEl = card.querySelector('h3');
             if (!titleEl) return;
             const cardName = titleEl.innerText.trim();
 
-            // Cari nama di Database Admin yang cocok dengan judul kartu HTML
             const dbItem = DATABASE_MENU.find(m => m.name.toLowerCase() === cardName.toLowerCase());
 
             if (dbItem) {
-                // A. Tulis Ulang Harga HTML
                 const priceEl = card.querySelector('.price');
                 if (priceEl) priceEl.innerText = `Rp ${parseInt(dbItem.price).toLocaleString('id-ID')}`;
 
-                // B. Update Tombol Overview & Inventaris
                 const overviewBtn = card.querySelector('.overview-btn');
                 if (overviewBtn) {
                     if (dbItem.desc) overviewBtn.setAttribute('data-komposisi', dbItem.desc);
                     overviewBtn.setAttribute('data-stok', dbItem.stock);
-                    INVENTORY[dbItem.name] = parseInt(dbItem.stock); // Sinkronisasi sistem stok 
+                    INVENTORY[dbItem.name] = parseInt(dbItem.stock); 
                 }
 
-                // C. Update Status Buka/Tutup
                 const isOpen = dbItem.active && parseInt(dbItem.stock) > 0;
                 card.setAttribute('data-open', isOpen ? 'true' : 'false');
 
-                // D. Update Fungsi Tombol Keranjang (Agar Memakai Harga Baru)
                 const addBtn = card.querySelector('.btn-pesan');
                 const qtyInput = card.querySelector('.qty-input');
                 if (addBtn && qtyInput) {
-                    // Timpa atribut onclick bawaan HTML
                     addBtn.setAttribute('onclick', `addToCart('${dbItem.name}', ${dbItem.price}, '${qtyInput.id}')`);
                 }
             }
         });
 
-        // 2. Update Slider Highlight Harga
         const slides = document.querySelectorAll('.slide');
         slides.forEach(slide => {
             const titleEl = slide.querySelector('h3');
@@ -782,23 +765,19 @@
             }
         });
 
-        // Setelah elemen HTML selesai diupdate, jalankan pengecekan status gembok/tampilan
         checkPOStatus();
     }
 
-    // Dengarkan Perubahan Data secara Live dari Admin
     window.addEventListener('storage', (e) => { 
         if (e.key === 'HS_MENU_DB' || e.key === 'HS_BATCH_STATUS' || e.key === 'HS_PO_CONFIG') {
             PO_CONFIG = getPOConfig();
             updateDeliveryInfo();
-            clearInterval(countdownTimer); // Reset Timer
+            clearInterval(countdownTimer); 
             startCountdown();
             loadData(); 
             checkPOStatus();
         }
     });
-
-    // ==============================================================
 
     function updateDeliveryInfo() {
       document.getElementById('deliveryDate').innerText = PO_CONFIG.deliveryText;
@@ -812,7 +791,7 @@
         return initialStok - inCartQty;
     }
 
-    let countdownTimer; // Variabel global agar bisa di-clear
+    let countdownTimer; 
     function startCountdown() {
       const deadline = new Date(PO_CONFIG.closeDate).getTime();
 
@@ -838,13 +817,11 @@
       }, 1000);
     }
 
-    // 🚀 FITUR BARU: PENGECEKAN STATUS BATCH ADMIN & TANGGAL
     function checkPOStatus() {
       const now = new Date().getTime();
       const deadline = new Date(PO_CONFIG.closeDate).getTime();
       const isTimeOver = now >= deadline; 
 
-      // Cek apakah Sakelar Master Admin dimatikan
       const batchStatus = localStorage.getItem('HS_BATCH_STATUS') || 'OPEN';
       const isBatchClosed = (batchStatus === 'CLOSED');
 
@@ -865,7 +842,6 @@
         const btn = card.querySelector('.btn-pesan');
         const input = card.querySelector('.qty-input');
 
-        // Jika waktu habis ATAU Menu dimatikan Admin ATAU Sakelar Induk Dimatikan Admin
         if (isTimeOver || !isManualOpen || isBatchClosed) {
           card.classList.add('closed'); 
           if(badge) {
@@ -922,7 +898,6 @@
       }
     }
 
-    // LOGIKA OVERVIEW POPUP & STOK REAL-TIME
     document.querySelectorAll('.overview-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const name = btn.getAttribute('data-name');
@@ -944,13 +919,11 @@
         document.getElementById('popup').style.display = 'none'; 
     }
 
-    // SHOPPING CART LOGIC 
     function saveCart() {
         localStorage.setItem('shoppingCart', JSON.stringify(cart));
     }
 
     function addToCart(name, price, qtyId) {
-      // Cek apakah Sakelar Master Dimatikan
       const batchStatus = localStorage.getItem('HS_BATCH_STATUS') || 'OPEN';
       if (batchStatus === 'CLOSED') {
           showToast("❌ Maaf, Admin telah menutup Batch PO ini!");
@@ -1035,7 +1008,6 @@
     }
 
     function checkoutWA() {
-      // Cek apakah Sakelar Master Dimatikan
       const batchStatus = localStorage.getItem('HS_BATCH_STATUS') || 'OPEN';
       if (batchStatus === 'CLOSED') {
           showToast("❌ Maaf, Admin telah menutup Batch PO ini!");
@@ -1053,7 +1025,6 @@
 
       if(!name || !address) {
           showToast("⚠️ Mohon lengkapi Nama & Alamat dulu ya!");
-          // Highlight input
           document.getElementById('buyer-name').style.border = "1px solid red";
           document.getElementById('buyer-address').style.border = "1px solid red";
           return;
@@ -1066,11 +1037,19 @@
       msg += `*DAFTAR PESANAN:*%0A`;
       
       let total = 0;
+      let orderItems = []; // Array untuk menyimpan detail item pesanan
       
       cart.forEach(item => {
         let subtotal = item.price * item.qty;
         msg += `- ${item.name} (${item.qty}x) : Rp ${subtotal.toLocaleString('id-ID')}%0A`;
         total += subtotal;
+        
+        // Simpan detail item ke array baru
+        orderItems.push({
+            name: item.name,
+            qty: item.qty,
+            subtotal: subtotal
+        });
       });
       
       const deliveryDate = document.getElementById('deliveryDate').innerText;
@@ -1078,7 +1057,24 @@
       msg += `*TOTAL TAGIHAN: Rp ${total.toLocaleString('id-ID')}*%0A`;
       msg += `*Estimasi Pengiriman: ${deliveryDate}*%0A%0A`;
       msg += `Mohon info pembayarannya ya. Terima kasih!`;
+
+      // 🚀 FITUR BARU: SIMPAN KE RIWAYAT PESANAN ADMIN SEBELUM REDIRECT KE WA
+      const newOrder = {
+          id: 'PO-' + Math.floor(Math.random() * 10000) + Date.now().toString().slice(-4),
+          date: new Date().toLocaleString('id-ID'),
+          customer: name,
+          address: address,
+          items: orderItems,
+          total: total,
+          status: 'Menunggu Pembayaran'
+      };
       
+      let ordersDB = JSON.parse(localStorage.getItem('HS_ORDERS_DB')) || [];
+      ordersDB.push(newOrder);
+      localStorage.setItem('HS_ORDERS_DB', JSON.stringify(ordersDB));
+      // Akhir fitur simpan riwayat
+      
+      // Kirim ke WA
       window.open(`https://wa.me/${PO_CONFIG.waNumber}?text=${msg}`);
     }
   </script>
