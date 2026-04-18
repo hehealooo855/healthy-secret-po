@@ -19,7 +19,6 @@
         .btn-cyber { background: #3b82f6; border: none; font-weight: 600; color: white; padding: 8px 20px; border-radius: 8px; transition: 0.3s; }
         .btn-cyber:hover { background: #2563eb; }
         
-        /* PERBAIKAN CSS: Toggle Switch agar Bulat Sempurna dan Tidak Ngebug */
         .switch { position: relative; display: inline-block; width: 50px; height: 26px; margin: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ef4444; transition: .4s; border-radius: 34px; box-shadow: inset 0 0 5px rgba(0,0,0,0.2); }
@@ -33,48 +32,79 @@
 <div class="sidebar">
     <h4 class="fw-bold text-primary mb-5">Healthy Admin</h4>
     <nav class="nav flex-column gap-3">
-        <a class="nav-link text-white bg-primary rounded px-3 py-2 fw-bold" href="#">🍔 Manajemen Menu</a>
-        <a class="nav-link text-secondary px-3 py-2" href="main.html" target="_blank">🌐 Lihat Web Pembeli</a>
-        <button class="btn btn-link text-danger text-start px-3 mt-5 text-decoration-none fw-bold" onclick="logout()">🚪 Logout</button>
+        <a class="nav-link text-white bg-primary rounded px-3 py-2 fw-bold" href="#" id="tab-sku" onclick="switchTab('sku')">🍔 Manajemen Menu</a>
+        <a class="nav-link text-secondary px-3 py-2 fw-bold" href="#" id="tab-orders" onclick="switchTab('orders')">📦 Riwayat Pesanan</a>
+        
+        <a class="nav-link text-secondary px-3 py-2 mt-3" href="main.html" target="_blank">🌐 Lihat Web Pembeli</a>
+        <button class="btn btn-link text-danger text-start px-3 mt-4 text-decoration-none fw-bold" onclick="logout()">🚪 Logout</button>
     </nav>
 </div>
 
 <div class="main">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold m-0">SKU Inventory Control</h2>
-            <p class="text-secondary small">Kelola harga, stok, dan status menu secara real-time.</p>
+    <div id="section-sku">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold m-0">SKU Inventory Control</h2>
+                <p class="text-secondary small">Kelola harga, stok, dan status menu secara real-time.</p>
+            </div>
+            <button class="btn btn-cyber" onclick="addMenu()">+ Tambah SKU Baru</button>
         </div>
-        <button class="btn btn-cyber" onclick="addMenu()">+ Tambah SKU Baru</button>
+
+        <div class="glass-card mb-4 d-flex justify-content-between align-items-center" style="border-color: #d4af37;">
+            <div>
+                <h4 class="fw-bold m-0 text-warning">Status Batch Pre-Order</h4>
+                <p class="small text-secondary m-0">Aktifkan sakelar ini untuk menentukan tanggal tutup PO dan membuka pesanan.</p>
+            </div>
+            <div>
+                <label class="switch">
+                    <input type="checkbox" id="batchToggle" onchange="toggleBatchStatus()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Item & Deskripsi</th>
+                        <th>Harga</th>
+                        <th>Stok</th>
+                        <th>Tersedia (Status Menu)</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="menuList"></tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="glass-card mb-4 d-flex justify-content-between align-items-center" style="border-color: #d4af37;">
-        <div>
-            <h4 class="fw-bold m-0 text-warning">Status Batch Pre-Order</h4>
-            <p class="small text-secondary m-0">Aktifkan sakelar ini untuk menentukan tanggal tutup PO dan membuka pesanan.</p>
+    <div id="section-orders" style="display: none;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold m-0 text-warning">Riwayat Pesanan 📦</h2>
+                <p class="text-secondary small">Daftar pesanan masuk dari pembeli Anda.</p>
+            </div>
+            <button class="btn btn-outline-danger btn-sm fw-bold" onclick="clearAllOrders()">🗑️ Bersihkan Semua Riwayat</button>
         </div>
-        <div>
-            <label class="switch">
-                <input type="checkbox" id="batchToggle" onchange="toggleBatchStatus()">
-                <span class="slider"></span>
-            </label>
+
+        <div class="glass-card">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID Pesanan</th>
+                        <th>Waktu</th>
+                        <th>Pelanggan</th>
+                        <th>Total Tagihan</th>
+                        <th>Status Pesanan</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="orderList"></tbody>
+            </table>
         </div>
     </div>
 
-    <div class="glass-card">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Item & Deskripsi</th>
-                    <th>Harga</th>
-                    <th>Stok</th>
-                    <th>Tersedia (Status Menu)</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="menuList"></tbody>
-        </table>
-    </div>
 </div>
 
 <script>
@@ -86,7 +116,123 @@
     }
 
     // =========================================================
-    // FITUR BARU: LOGIKA BACA & TULIS BATCH STATUS + TANGGAL PO
+    // FITUR BARU: LOGIKA TAB SWITCHING & RENDER ORDERS
+    // =========================================================
+    function switchTab(tabName) {
+        if(tabName === 'sku') {
+            document.getElementById('section-sku').style.display = 'block';
+            document.getElementById('section-orders').style.display = 'none';
+            document.getElementById('tab-sku').className = 'nav-link text-white bg-primary rounded px-3 py-2 fw-bold';
+            document.getElementById('tab-orders').className = 'nav-link text-secondary px-3 py-2 fw-bold';
+            render();
+        } else {
+            document.getElementById('section-sku').style.display = 'none';
+            document.getElementById('section-orders').style.display = 'block';
+            document.getElementById('tab-sku').className = 'nav-link text-secondary px-3 py-2 fw-bold';
+            document.getElementById('tab-orders').className = 'nav-link text-white bg-primary rounded px-3 py-2 fw-bold';
+            renderOrders();
+        }
+    }
+
+    function renderOrders() {
+        let orders = JSON.parse(localStorage.getItem('HS_ORDERS_DB')) || [];
+        const tbody = document.getElementById('orderList');
+        
+        if(orders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-5">Belum ada pesanan masuk.</td></tr>';
+            return;
+        }
+
+        // Urutkan pesanan dari yang paling baru (teratas)
+        orders.sort((a,b) => b.id.localeCompare(a.id));
+
+        tbody.innerHTML = orders.map((o, i) => {
+            // Logika Warna Status
+            const colorMap = {
+                'Menunggu Pembayaran': 'text-warning',
+                'Diproses': 'text-primary',
+                'Selesai': 'text-success',
+                'Dibatalkan': 'text-danger'
+            };
+            const colorClass = colorMap[o.status] || 'text-white';
+
+            return `
+                <tr>
+                    <td class="fw-bold" style="font-family: monospace; font-size:12px;">${o.id}</td>
+                    <td class="small text-secondary">${o.date}</td>
+                    <td>
+                        <b class="text-white">${o.customer}</b><br>
+                        <small class="text-secondary">${o.items.length} jenis item dipesan</small>
+                    </td>
+                    <td class="fw-bold text-success">Rp ${parseInt(o.total).toLocaleString('id-ID')}</td>
+                    <td>
+                        <select class="form-select form-select-sm fw-bold ${colorClass} bg-dark border-secondary" onchange="updateOrderStatus('${o.id}', this.value)" style="width: 190px;">
+                            <option value="Menunggu Pembayaran" ${o.status === 'Menunggu Pembayaran' ? 'selected' : ''}>⏳ Menunggu Pembayaran</option>
+                            <option value="Diproses" ${o.status === 'Diproses' ? 'selected' : ''}>🍳 Sedang Diproses</option>
+                            <option value="Selesai" ${o.status === 'Selesai' ? 'selected' : ''}>✅ Selesai</option>
+                            <option value="Dibatalkan" ${o.status === 'Dibatalkan' ? 'selected' : ''}>❌ Dibatalkan</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-info fw-bold py-1 px-2" onclick="viewOrder('${o.id}')">👁️ Detail</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    window.updateOrderStatus = (id, newStatus) => {
+        let orders = JSON.parse(localStorage.getItem('HS_ORDERS_DB')) || [];
+        const orderIndex = orders.findIndex(o => o.id === id);
+        if (orderIndex > -1) {
+            orders[orderIndex].status = newStatus;
+            localStorage.setItem('HS_ORDERS_DB', JSON.stringify(orders));
+            renderOrders(); // Refresh warna tabel
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Status Diperbarui', showConfirmButton: false, timer: 1500 });
+        }
+    }
+
+    window.viewOrder = (id) => {
+        let orders = JSON.parse(localStorage.getItem('HS_ORDERS_DB')) || [];
+        const o = orders.find(x => x.id === id);
+        if(!o) return;
+
+        let itemsHtml = o.items.map(item => `<li><b>${item.qty}x</b> ${item.name} <span class="float-end">Rp ${item.subtotal.toLocaleString('id-ID')}</span></li>`).join('');
+
+        Swal.fire({
+            title: `Detail Pesanan`,
+            background: '#1e293b', color: '#fff',
+            html: `
+                <div class="text-start small">
+                    <p class="mb-1 text-secondary">ID: <b class="text-white">${o.id}</b></p>
+                    <p class="mb-1 text-secondary">Nama: <b class="text-white">${o.customer}</b></p>
+                    <p class="mb-3 text-secondary">Alamat/Catatan:<br><span class="text-white">${o.address}</span></p>
+                    
+                    <div class="p-3 bg-dark rounded border border-secondary mb-3">
+                        <ul class="list-unstyled m-0" style="font-size:13px;">${itemsHtml}</ul>
+                    </div>
+                    
+                    <h5 class="fw-bold text-warning text-end m-0">Total: Rp ${parseInt(o.total).toLocaleString('id-ID')}</h5>
+                </div>
+            `,
+            confirmButtonColor: '#3b82f6',
+            confirmButtonText: 'Tutup'
+        });
+    }
+
+    window.clearAllOrders = () => {
+        Swal.fire({ title: 'Hapus Semua Riwayat?', text: 'Semua data pesanan pembeli akan hilang!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'Ya, Bersihkan!', background: '#1e293b', color: '#fff' }).then((r) => {
+            if (r.isConfirmed) { 
+                localStorage.removeItem('HS_ORDERS_DB');
+                renderOrders();
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Riwayat Pesanan Dibersihkan.', showConfirmButton: false, timer: 1500 });
+            }
+        });
+    }
+
+
+    // =========================================================
+    // LOGIKA MANAJEMEN MENU & BATCH STATUS (ASLI)
     // =========================================================
     let batchStatus = localStorage.getItem('HS_BATCH_STATUS') || 'CLOSED';
     document.getElementById('batchToggle').checked = (batchStatus === 'OPEN');
@@ -96,7 +242,6 @@
         const isChecked = toggle.checked;
 
         if (isChecked) {
-            // Jika Admin menyalakan (OPEN BATCH), Minta Input Tanggal!
             const { value: formValues } = await Swal.fire({
                 title: 'Buka Batch PO Baru',
                 background: '#1e293b', color: '#fff',
@@ -126,22 +271,14 @@
             });
 
             if (formValues) {
-                // Simpan Konfigurasi Tanggal ke LocalStorage agar dibaca main.html
-                const newConfig = {
-                    closeDate: formValues.closeDate, 
-                    deliveryText: formValues.deliveryText,
-                    waNumber: "62818895488" 
-                };
+                const newConfig = { closeDate: formValues.closeDate, deliveryText: formValues.deliveryText, waNumber: "62818895488" };
                 localStorage.setItem('HS_PO_CONFIG', JSON.stringify(newConfig));
                 localStorage.setItem('HS_BATCH_STATUS', 'OPEN');
-                
                 Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Batch PO Dibuka!', showConfirmButton: false, timer: 1500 });
             } else {
-                // Jika admin menekan batal, kembalikan sakelar ke posisi OFF
                 toggle.checked = false;
             }
         } else {
-            // Jika Admin mematikan (CLOSE BATCH)
             localStorage.setItem('HS_BATCH_STATUS', 'CLOSED');
             Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Batch PO Ditutup Paksa!', showConfirmButton: false, timer: 1500 });
         }
