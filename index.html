@@ -12,6 +12,7 @@
             --accent: #d4af37;    
             --light-bg: #f9fbfd;
         }
+        
         body { 
             background-color: var(--light-bg); 
             font-family: 'Poppins', sans-serif; 
@@ -295,7 +296,7 @@
                 };
 
                 localStorage.setItem('hs_user_data', JSON.stringify(data));
-                window.location.href = "otp.php"; // UPDATE LINK KE PHP
+                window.location.href = "otp.html"; // LINK HTML
 
             } else if(currentMode === 'admin') {
                 const u = document.getElementById('adminUser').value;
@@ -304,7 +305,7 @@
                 if(u === "admin" && p === "medan2026") {
                     localStorage.setItem('HS_AUTH', 'true');
                     alert("Akses Diterima! Mengarahkan ke Dashboard Admin...");
-                    window.location.href = "admin.php"; // UPDATE LINK KE PHP
+                    window.location.href = "admin.html"; // LINK HTML
                 } else {
                     alert("Akses Ditolak! Username atau Password Admin salah.");
                     initCaptcha(); 
