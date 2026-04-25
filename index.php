@@ -12,8 +12,6 @@
             --accent: #d4af37;    
             --light-bg: #f9fbfd;
         }
-        
-        /* PERBAIKAN: Menghapus overflow hidden agar layar HP bisa di-scroll */
         body { 
             background-color: var(--light-bg); 
             font-family: 'Poppins', sans-serif; 
@@ -34,7 +32,6 @@
         .shape-2 { bottom: -10%; right: -5%; width: 400px; height: 400px; background: rgba(10, 116, 218, 0.15); }
         @keyframes float { 0% { transform: translateY(0); } 100% { transform: translateY(30px); } }
 
-        /* Menambahkan margin auto agar kartu responsif di semua device */
         .auth-card { 
             background: rgba(255, 255, 255, 0.95); 
             backdrop-filter: blur(10px);
@@ -298,7 +295,7 @@
                 };
 
                 localStorage.setItem('hs_user_data', JSON.stringify(data));
-                window.location.href = "otp.html";
+                window.location.href = "otp.php"; // UPDATE LINK KE PHP
 
             } else if(currentMode === 'admin') {
                 const u = document.getElementById('adminUser').value;
@@ -307,7 +304,7 @@
                 if(u === "admin" && p === "medan2026") {
                     localStorage.setItem('HS_AUTH', 'true');
                     alert("Akses Diterima! Mengarahkan ke Dashboard Admin...");
-                    window.location.href = "admin.html";
+                    window.location.href = "admin.php"; // UPDATE LINK KE PHP
                 } else {
                     alert("Akses Ditolak! Username atau Password Admin salah.");
                     initCaptcha(); 
