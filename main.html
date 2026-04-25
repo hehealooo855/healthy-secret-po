@@ -254,7 +254,7 @@
           <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
           <li class="nav-item"><a class="nav-link active" href="#menu-gallery">Menu PO</a></li>
           
-          <li class="nav-item"><a class="nav-link text-info" href="secure-helpdesk.php">🤖 Healthy Bot</a></li>
+          <li class="nav-item"><a class="nav-link text-info" href="secure-helpdesk.html">🤖 Healthy Bot</a></li>
 
           <li class="nav-item">
             <a class="nav-link text-danger" href="#" data-bs-toggle="modal" data-bs-target="#adminLoginModal" style="display: flex; align-items: center; gap: 5px; margin-right: 15px;">
@@ -555,8 +555,7 @@
 
   <footer>
     <p>Created By TeamDLOV 2024</p>
-    
-    <a href="privacy-policy.php" style="color: #ffda79; text-decoration: none; font-size: 14px;">🛡️ Kebijakan Privasi & Keamanan Data</a>
+    <a href="privacy-policy.html" style="color: #ffda79; text-decoration: none; font-size: 14px;">🛡️ Kebijakan Privasi & Keamanan Data</a>
   </footer>
 
   <a href="https://wa.me/6281234567890?text=Halo%2C%20saya%20mau%20pesan%20menu" class="wa-btn">WhatsApp</a>
@@ -1068,7 +1067,6 @@
       window.open(`https://wa.me/${PO_CONFIG.waNumber}?text=${msg}`);
     }
 
-    // SUNTIKAN JS: LOGIKA PUZZLE CAPTCHA ADMIN
     const canvas = document.getElementById('mainCanvas');
     const piece = document.getElementById('pieceCanvas');
     const ctx = canvas ? canvas.getContext('2d') : null;
@@ -1157,15 +1155,13 @@
         if(u === "admin" && p === "medan2026") {
             localStorage.setItem('HS_AUTH', 'true');
             showToast("✅ Mengarahkan ke Dashboard Admin...");
-            
-            // UPDATE LINK KE PHP
-            setTimeout(() => window.location.href = 'admin.php', 1500);
+            setTimeout(() => window.location.href = 'admin.html', 1500);
         } else {
             alert('Username atau Password salah!');
             initCaptcha();
         }
     }
   </script>
-
+      
 </body>
 </html>
