@@ -35,7 +35,7 @@
         <a class="nav-link text-white bg-primary rounded px-3 py-2 fw-bold" href="#" id="tab-sku" onclick="switchTab('sku')">🍔 Manajemen Menu</a>
         <a class="nav-link text-secondary px-3 py-2 fw-bold" href="#" id="tab-orders" onclick="switchTab('orders')">📦 Riwayat Pesanan</a>
         
-        <a class="nav-link text-secondary px-3 py-2 mt-3" href="main.html" target="_blank">🌐 Lihat Web Pembeli</a>
+        <a class="nav-link text-secondary px-3 py-2 mt-3" href="main.php" target="_blank">🌐 Lihat Web Pembeli</a>
         <button class="btn btn-link text-danger text-start px-3 mt-4 text-decoration-none fw-bold" onclick="logout()">🚪 Logout</button>
     </nav>
 </div>
@@ -108,16 +108,14 @@
 </div>
 
 <script>
-    if(localStorage.getItem('HS_AUTH') !== 'true') window.location.href = 'index.html';
+    // UPDATE LINK KE PHP
+    if(localStorage.getItem('HS_AUTH') !== 'true') window.location.href = 'index.php';
 
     function logout() {
         localStorage.removeItem('HS_AUTH');
-        window.location.href = 'index.html';
+        window.location.href = 'index.php'; // UPDATE LINK KE PHP
     }
 
-    // =========================================================
-    // FITUR BARU: LOGIKA TAB SWITCHING & RENDER ORDERS
-    // =========================================================
     function switchTab(tabName) {
         if(tabName === 'sku') {
             document.getElementById('section-sku').style.display = 'block';
@@ -143,11 +141,9 @@
             return;
         }
 
-        // Urutkan pesanan dari yang paling baru (teratas)
         orders.sort((a,b) => b.id.localeCompare(a.id));
 
         tbody.innerHTML = orders.map((o, i) => {
-            // Logika Warna Status
             const colorMap = {
                 'Menunggu Pembayaran': 'text-warning',
                 'Diproses': 'text-primary',
@@ -187,7 +183,7 @@
         if (orderIndex > -1) {
             orders[orderIndex].status = newStatus;
             localStorage.setItem('HS_ORDERS_DB', JSON.stringify(orders));
-            renderOrders(); // Refresh warna tabel
+            renderOrders(); 
             Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Status Diperbarui', showConfirmButton: false, timer: 1500 });
         }
     }
@@ -230,10 +226,6 @@
         });
     }
 
-
-    // =========================================================
-    // LOGIKA MANAJEMEN MENU & BATCH STATUS (ASLI)
-    // =========================================================
     let batchStatus = localStorage.getItem('HS_BATCH_STATUS') || 'CLOSED';
     document.getElementById('batchToggle').checked = (batchStatus === 'OPEN');
 
