@@ -254,7 +254,7 @@
           <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
           <li class="nav-item"><a class="nav-link active" href="#menu-gallery">Menu PO</a></li>
           
-          <li class="nav-item"><a class="nav-link text-info" href="secure-helpdesk.html">🤖 Healthy Bot</a></li>
+          <li class="nav-item"><a class="nav-link text-info" href="secure-helpdesk.php">🤖 Healthy Bot</a></li>
 
           <li class="nav-item">
             <a class="nav-link text-danger" href="#" data-bs-toggle="modal" data-bs-target="#adminLoginModal" style="display: flex; align-items: center; gap: 5px; margin-right: 15px;">
@@ -555,7 +555,8 @@
 
   <footer>
     <p>Created By TeamDLOV 2024</p>
-    <a href="privacy-policy.html" style="color: #ffda79; text-decoration: none; font-size: 14px;">🛡️ Kebijakan Privasi & Keamanan Data</a>
+    
+    <a href="privacy-policy.php" style="color: #ffda79; text-decoration: none; font-size: 14px;">🛡️ Kebijakan Privasi & Keamanan Data</a>
   </footer>
 
   <a href="https://wa.me/6281234567890?text=Halo%2C%20saya%20mau%20pesan%20menu" class="wa-btn">WhatsApp</a>
@@ -650,9 +651,6 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
-    // ==========================================
-    // ⚙️ PUSAT KONTROL TOKO DINAMIS 
-    // ==========================================
     function getPOConfig() {
         const saved = JSON.parse(localStorage.getItem('HS_PO_CONFIG'));
         return saved || {
@@ -662,10 +660,6 @@
         };
     }
     let PO_CONFIG = getPOConfig();
-
-    // ==========================================
-    // 🔧 LOGIC SYSTEM & DYNAMIC INVENTORY
-    // ==========================================
     
     let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
     let INVENTORY = {};
@@ -1037,14 +1031,13 @@
       msg += `*DAFTAR PESANAN:*%0A`;
       
       let total = 0;
-      let orderItems = []; // Array untuk menyimpan detail item pesanan
+      let orderItems = []; 
       
       cart.forEach(item => {
         let subtotal = item.price * item.qty;
         msg += `- ${item.name} (${item.qty}x) : Rp ${subtotal.toLocaleString('id-ID')}%0A`;
         total += subtotal;
         
-        // Simpan detail item ke array baru
         orderItems.push({
             name: item.name,
             qty: item.qty,
@@ -1058,7 +1051,6 @@
       msg += `*Estimasi Pengiriman: ${deliveryDate}*%0A%0A`;
       msg += `Mohon info pembayarannya ya. Terima kasih!`;
 
-      // 🚀 FITUR BARU: SIMPAN KE RIWAYAT PESANAN ADMIN SEBELUM REDIRECT KE WA
       const newOrder = {
           id: 'PO-' + Math.floor(Math.random() * 10000) + Date.now().toString().slice(-4),
           date: new Date().toLocaleString('id-ID'),
@@ -1072,12 +1064,108 @@
       let ordersDB = JSON.parse(localStorage.getItem('HS_ORDERS_DB')) || [];
       ordersDB.push(newOrder);
       localStorage.setItem('HS_ORDERS_DB', JSON.stringify(ordersDB));
-      // Akhir fitur simpan riwayat
       
-      // Kirim ke WA
       window.open(`https://wa.me/${PO_CONFIG.waNumber}?text=${msg}`);
     }
+
+    // SUNTIKAN JS: LOGIKA PUZZLE CAPTCHA ADMIN
+    const canvas = document.getElementById('mainCanvas');
+    const piece = document.getElementById('pieceCanvas');
+    const ctx = canvas ? canvas.getContext('2d') : null;
+    const pCtx = piece ? piece.getContext('2d') : null;
+    const slider = document.getElementById('puzzleSlider');
+    let puzzleX = 0;
+    let puzzleY = 50;
+    let isVerified = false;
+    const pieceSize = 45;
+
+    function initCaptcha() {
+        if(!canvas || !piece) return;
+        canvas.width = 320; canvas.height = 150; 
+        piece.width = 320; piece.height = 150;
+        puzzleX = Math.floor(Math.random() * 100) + 150; 
+
+        let grad = ctx.createLinearGradient(0, 0, 320, 150);
+        grad.addColorStop(0, "#0a74da");
+        grad.addColorStop(1, "#d4af37");
+        ctx.fillStyle = grad; 
+        ctx.fillRect(0,0,320,150);
+        
+        ctx.fillStyle = "rgba(255,255,255,0.15)";
+        for(let i=0; i<15; i++) { 
+            ctx.beginPath(); 
+            ctx.arc(Math.random()*320, Math.random()*150, Math.random()*20+10, 0, Math.PI*2); 
+            ctx.fill(); 
+        }
+
+        ctx.fillStyle = "rgba(0,0,0,0.5)"; 
+        ctx.fillRect(puzzleX, puzzleY, pieceSize, pieceSize);
+
+        pCtx.clearRect(0,0,320,150);
+        pCtx.fillStyle = "#ffda79"; 
+        pCtx.fillRect(10, puzzleY, pieceSize, pieceSize);
+        pCtx.strokeStyle = "#fff"; 
+        pCtx.lineWidth = 2;
+        pCtx.strokeRect(10, puzzleY, pieceSize, pieceSize);
+        
+        if(slider) {
+            slider.value = 0; 
+            slider.disabled = false;
+        }
+        piece.style.transform = `translateX(0px)`;
+        isVerified = false;
+        document.getElementById('btnLogin').disabled = true;
+        const status = document.getElementById('captchaStatus');
+        if(status) {
+            status.innerHTML = "Tarik slider untuk mencocokkan kepingan";
+            status.style.color = "#666";
+        }
+    }
+
+    const adminModalEl = document.getElementById('adminLoginModal');
+    if(adminModalEl) {
+        adminModalEl.addEventListener('shown.bs.modal', function () {
+            initCaptcha();
+        });
+    }
+
+    if(slider) {
+        slider.addEventListener('input', (e) => {
+            if(isVerified) return;
+            piece.style.transform = `translateX(${e.target.value}px)`;
+        });
+
+        slider.addEventListener('change', (e) => {
+            if(isVerified) return;
+            let currentX = parseInt(e.target.value) + 10; 
+            if (Math.abs(currentX - puzzleX) < 8) {
+                isVerified = true; 
+                slider.disabled = true;
+                document.getElementById('captchaStatus').innerHTML = "✅ Verifikasi Berhasil!";
+                document.getElementById('captchaStatus').style.color = "#25d366";
+                document.getElementById('btnLogin').disabled = false;
+            } else {
+                initCaptcha();
+                showToast("❌ Verifikasi gagal, coba lagi!");
+            }
+        });
+    }
+
+    function handleAdminLogin() {
+        const u = document.getElementById('adminUser').value;
+        const p = document.getElementById('adminPass').value;
+        if(u === "admin" && p === "medan2026") {
+            localStorage.setItem('HS_AUTH', 'true');
+            showToast("✅ Mengarahkan ke Dashboard Admin...");
+            
+            // UPDATE LINK KE PHP
+            setTimeout(() => window.location.href = 'admin.php', 1500);
+        } else {
+            alert('Username atau Password salah!');
+            initCaptcha();
+        }
+    }
   </script>
-      
+
 </body>
 </html>
