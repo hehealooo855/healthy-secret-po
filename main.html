@@ -400,7 +400,7 @@
       Pengiriman: <b style="color:var(--primary)" id="deliveryDateTarget">...</b>
     </p>
     
-    <div class="menu-grid">
+    <div class="menu-grid" id="main-sku-container">
       
       <div class="menu-card" id="target-soto" data-open="true" data-aos="fade-up">
         <span class="status-badge"></span>
@@ -714,20 +714,43 @@
         syncHTMLWithDatabase();
     }
 
+    // ==============================================================
+    // 🚀 FITUR BARU: AUTO-SYNC (MENAMBAH & MENGHAPUS ELEMEN HTML)
+    // ==============================================================
     function syncHTMLWithDatabase() {
-        const cards = document.querySelectorAll('.menu-card');
-        cards.forEach(card => {
+        const grid = document.getElementById('main-sku-container');
+        const scroll = document.getElementById('menuScroll');
+
+        // 1. Hapus elemen HTML yang menunya sudah dihapus oleh Admin
+        document.querySelectorAll('.menu-card').forEach(card => {
             const titleEl = card.querySelector('h3');
-            if (!titleEl) return;
-            const cardName = titleEl.innerText.trim();
+            if (titleEl) {
+                const isStillInDB = DATABASE_MENU.find(m => m.name.toLowerCase() === titleEl.innerText.trim().toLowerCase());
+                if (!isStillInDB) card.remove();
+            }
+        });
+        document.querySelectorAll('.slide').forEach(slide => {
+            const titleEl = slide.querySelector('h3');
+            if (titleEl) {
+                const isStillInDB = DATABASE_MENU.find(m => m.name.toLowerCase() === titleEl.innerText.trim().toLowerCase());
+                if (!isStillInDB) slide.remove();
+            }
+        });
 
-            const dbItem = DATABASE_MENU.find(m => m.name.toLowerCase() === cardName.toLowerCase());
+        // 2. Perbarui Menu Lama atau Tambah Menu Baru (Append)
+        DATABASE_MENU.forEach((dbItem) => {
+            // A. Sinkronisasi Grid Bawah
+            let existingCard = Array.from(grid.querySelectorAll('.menu-card')).find(card => {
+                const titleEl = card.querySelector('h3');
+                return titleEl && titleEl.innerText.trim().toLowerCase() === dbItem.name.toLowerCase();
+            });
 
-            if (dbItem) {
-                const priceEl = card.querySelector('.price');
+            if (existingCard) {
+                // Update jika sudah ada
+                const priceEl = existingCard.querySelector('.price');
                 if (priceEl) priceEl.innerText = `Rp ${parseInt(dbItem.price).toLocaleString('id-ID')}`;
 
-                const overviewBtn = card.querySelector('.overview-btn');
+                const overviewBtn = existingCard.querySelector('.overview-btn');
                 if (overviewBtn) {
                     if (dbItem.desc) overviewBtn.setAttribute('data-komposisi', dbItem.desc);
                     overviewBtn.setAttribute('data-stok', dbItem.stock);
@@ -735,26 +758,69 @@
                 }
 
                 const isOpen = dbItem.active && parseInt(dbItem.stock) > 0;
-                card.setAttribute('data-open', isOpen ? 'true' : 'false');
+                existingCard.setAttribute('data-open', isOpen ? 'true' : 'false');
 
-                const addBtn = card.querySelector('.btn-pesan');
-                const qtyInput = card.querySelector('.qty-input');
+                const addBtn = existingCard.querySelector('.btn-pesan');
+                const qtyInput = existingCard.querySelector('.qty-input');
                 if (addBtn && qtyInput) {
                     addBtn.setAttribute('onclick', `addToCart('${dbItem.name}', ${dbItem.price}, '${qtyInput.id}')`);
                 }
-            }
-        });
+            } else {
+                // TAMBAH KARTU BARU JIKA BELUM ADA DI HTML
+                const newCard = document.createElement('div');
+                const isOpen = dbItem.active && parseInt(dbItem.stock) > 0;
+                newCard.className = `menu-card ${isOpen ? '' : 'closed'}`;
+                newCard.id = `target-${dbItem.id || Date.now()}`;
+                newCard.setAttribute('data-open', isOpen ? 'true' : 'false');
+                newCard.setAttribute('data-aos', 'fade-up');
+                
+                INVENTORY[dbItem.name] = parseInt(dbItem.stock);
 
-        const slides = document.querySelectorAll('.slide');
-        slides.forEach(slide => {
-            const titleEl = slide.querySelector('h3');
-            if (!titleEl) return;
-            const slideName = titleEl.innerText.trim();
-            const dbItem = DATABASE_MENU.find(m => m.name.toLowerCase() === slideName.toLowerCase());
-            
-            if (dbItem) {
-                const priceEl = slide.querySelector('.price-slider') || slide.querySelector('p');
+                newCard.innerHTML = `
+                    <span class="status-badge ${isOpen ? 'badge-open' : 'badge-closed'}">${isOpen ? 'OPEN PO' : 'HABIS'}</span>
+                    <img src="${dbItem.img}" onerror="this.src='https://placehold.co/400x300?text=Menu+Baru'" alt="${dbItem.name}">
+                    <div class="card-body">
+                      <h3>${dbItem.name}</h3> <span class="price">Rp ${parseInt(dbItem.price).toLocaleString('id-ID')}</span>
+                      <button class="btn-overview overview-btn" data-name="${dbItem.name}" data-komposisi="${dbItem.desc || ''}" data-stok="${dbItem.stock}">Overview</button>
+                      <div class="action-row">
+                        <input type="number" id="qty-${dbItem.id || Date.now()}" class="qty-input" value="1" min="1" ${isOpen ? '' : 'disabled'}>
+                        <button class="btn-pesan" onclick="addToCart('${dbItem.name}', ${dbItem.price}, 'qty-${dbItem.id || Date.now()}')" ${isOpen ? '' : 'disabled'}>+ Pre-Order</button>
+                      </div>
+                    </div>
+                `;
+                
+                // Tambahkan event listener untuk popup overview
+                newCard.querySelector('.overview-btn').addEventListener('click', () => {
+                    document.getElementById('popupTitle').innerText = dbItem.name;
+                    document.getElementById('popupKomposisi').innerText = dbItem.desc || "Belum ada deskripsi.";
+                    document.getElementById('popupTesti').innerHTML = "Belum ada ulasan untuk menu ini.";
+                    document.getElementById('popupStok').innerText = getAvailableStock(dbItem.name) + " Pcs";
+                    document.getElementById('popup').style.display = 'block';
+                });
+
+                grid.appendChild(newCard);
+            }
+
+            // B. Sinkronisasi Slider Atas
+            let existingSlide = Array.from(scroll.querySelectorAll('.slide')).find(slide => {
+                const titleEl = slide.querySelector('h3');
+                return titleEl && titleEl.innerText.trim().toLowerCase() === dbItem.name.toLowerCase();
+            });
+
+            if (existingSlide) {
+                // Update jika sudah ada
+                const priceEl = existingSlide.querySelector('.price-slider') || existingSlide.querySelector('p');
                 if (priceEl) priceEl.innerText = `Rp ${parseInt(dbItem.price).toLocaleString('id-ID')}`;
+            } else {
+                // TAMBAH SLIDE BARU JIKA BELUM ADA
+                const newSlide = document.createElement('div');
+                newSlide.className = 'slide';
+                newSlide.innerHTML = `
+                    <img src="${dbItem.img}" onerror="this.src='https://placehold.co/400x300?text=Menu+Baru'" alt="${dbItem.name}">
+                    <h3>${dbItem.name}</h3> <p class="price-slider">Rp ${parseInt(dbItem.price).toLocaleString('id-ID')}</p>
+                    <button class="card-btn" onclick="scrollToMenu('target-${dbItem.id || Date.now()}')">Lihat Detail ➜</button>
+                `;
+                scroll.appendChild(newSlide);
             }
         });
 
@@ -1065,6 +1131,11 @@
       localStorage.setItem('HS_ORDERS_DB', JSON.stringify(ordersDB));
       
       window.open(`https://wa.me/${PO_CONFIG.waNumber}?text=${msg}`);
+      
+      cart = [];
+      saveCart();
+      updateCartUI();
+      toggleCart();
     }
 
     const canvas = document.getElementById('mainCanvas');
