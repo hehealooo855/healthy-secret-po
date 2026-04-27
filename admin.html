@@ -35,6 +35,8 @@
         <a class="nav-link text-white bg-primary rounded px-3 py-2 fw-bold" href="#" id="tab-sku" onclick="switchTab('sku')">🍔 Manajemen Menu</a>
         <a class="nav-link text-secondary px-3 py-2 fw-bold" href="#" id="tab-orders" onclick="switchTab('orders')">📦 Riwayat Pesanan</a>
         
+        <a class="nav-link text-secondary px-3 py-2 fw-bold" href="#" id="tab-customers" onclick="switchTab('customers')">👥 Manajemen Pelanggan</a>
+        
         <a class="nav-link text-secondary px-3 py-2 mt-3" href="main.html" target="_blank">🌐 Lihat Web Pembeli</a>
         <button class="btn btn-link text-danger text-start px-3 mt-4 text-decoration-none fw-bold" onclick="logout()">🚪 Logout</button>
     </nav>
@@ -105,6 +107,29 @@
         </div>
     </div>
 
+    <div id="section-customers" style="display: none;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold m-0 text-primary">Manajemen Pelanggan 👥</h2>
+                <p class="text-secondary small">Daftar akun pelanggan dan sistem blokir.</p>
+            </div>
+        </div>
+        <div class="glass-card">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nama Lengkap</th>
+                        <th>Nomor WhatsApp</th>
+                        <th>Alamat</th>
+                        <th>Status Akun</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="customerList"></tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -116,21 +141,57 @@
     }
 
     function switchTab(tabName) {
-        if(tabName === 'sku') {
-            document.getElementById('section-sku').style.display = 'block';
-            document.getElementById('section-orders').style.display = 'none';
-            document.getElementById('tab-sku').className = 'nav-link text-white bg-primary rounded px-3 py-2 fw-bold';
-            document.getElementById('tab-orders').className = 'nav-link text-secondary px-3 py-2 fw-bold';
-            render();
-        } else {
-            document.getElementById('section-sku').style.display = 'none';
-            document.getElementById('section-orders').style.display = 'block';
-            document.getElementById('tab-sku').className = 'nav-link text-secondary px-3 py-2 fw-bold';
-            document.getElementById('tab-orders').className = 'nav-link text-white bg-primary rounded px-3 py-2 fw-bold';
-            renderOrders();
+        document.getElementById('section-sku').style.display = tabName === 'sku' ? 'block' : 'none';
+        document.getElementById('section-orders').style.display = tabName === 'orders' ? 'block' : 'none';
+        document.getElementById('section-customers').style.display = tabName === 'customers' ? 'block' : 'none';
+        
+        document.getElementById('tab-sku').className = tabName === 'sku' ? 'nav-link text-white bg-primary rounded px-3 py-2 fw-bold' : 'nav-link text-secondary px-3 py-2 fw-bold';
+        document.getElementById('tab-orders').className = tabName === 'orders' ? 'nav-link text-white bg-primary rounded px-3 py-2 fw-bold' : 'nav-link text-secondary px-3 py-2 fw-bold';
+        document.getElementById('tab-customers').className = tabName === 'customers' ? 'nav-link text-white bg-primary rounded px-3 py-2 fw-bold' : 'nav-link text-secondary px-3 py-2 fw-bold';
+
+        if(tabName === 'sku') render();
+        if(tabName === 'orders') renderOrders();
+        if(tabName === 'customers') renderCustomers();
+    }
+
+    // --- FUNGSI CUSTOMERS (BARU) ---
+    function renderCustomers() {
+        let users = JSON.parse(localStorage.getItem('HS_USERS_DB')) || [];
+        const tbody = document.getElementById('customerList');
+        
+        if(users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-5">Belum ada pelanggan terdaftar.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = users.map(u => `
+            <tr>
+                <td class="fw-bold text-white">${u.name}</td>
+                <td style="font-family: monospace;">${u.phone}</td>
+                <td class="small text-secondary">${u.address}</td>
+                <td><span class="badge ${u.status === 'blocked' ? 'bg-danger' : 'bg-success'}">${u.status === 'blocked' ? 'Diblokir' : 'Aktif'}</span></td>
+                <td>
+                    <button class="btn btn-sm ${u.status === 'blocked' ? 'btn-success' : 'btn-danger'} fw-bold py-1 px-2" onclick="toggleBlockUser('${u.phone}')">
+                        ${u.status === 'blocked' ? '🔓 Buka Blokir' : '🚫 Blokir Akun'}
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    window.toggleBlockUser = (phone) => {
+        let users = JSON.parse(localStorage.getItem('HS_USERS_DB')) || [];
+        let user = users.find(u => u.phone === phone);
+        if(user) {
+            user.status = user.status === 'blocked' ? 'active' : 'blocked';
+            localStorage.setItem('HS_USERS_DB', JSON.stringify(users));
+            renderCustomers();
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Status Pelanggan Diperbarui!', showConfirmButton: false, timer: 1500 });
         }
     }
 
+
+    // --- FUNGSI ORDERS ---
     function renderOrders() {
         let orders = JSON.parse(localStorage.getItem('HS_ORDERS_DB')) || [];
         const tbody = document.getElementById('orderList');
@@ -157,7 +218,7 @@
                     <td class="small text-secondary">${o.date}</td>
                     <td>
                         <b class="text-white">${o.customer}</b><br>
-                        <small class="text-secondary">${o.items.length} jenis item dipesan</small>
+                        <small class="text-secondary">${o.phone || '-'}</small>
                     </td>
                     <td class="fw-bold text-success">Rp ${parseInt(o.total).toLocaleString('id-ID')}</td>
                     <td>
@@ -200,7 +261,7 @@
             html: `
                 <div class="text-start small">
                     <p class="mb-1 text-secondary">ID: <b class="text-white">${o.id}</b></p>
-                    <p class="mb-1 text-secondary">Nama: <b class="text-white">${o.customer}</b></p>
+                    <p class="mb-1 text-secondary">Nama: <b class="text-white">${o.customer} (${o.phone||''})</b></p>
                     <p class="mb-3 text-secondary">Alamat/Catatan:<br><span class="text-white">${o.address}</span></p>
                     
                     <div class="p-3 bg-dark rounded border border-secondary mb-3">
@@ -225,6 +286,8 @@
         });
     }
 
+
+    // --- FUNGSI SKU ---
     let batchStatus = localStorage.getItem('HS_BATCH_STATUS') || 'CLOSED';
     document.getElementById('batchToggle').checked = (batchStatus === 'OPEN');
 
