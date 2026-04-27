@@ -7,73 +7,33 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #0a74da;   
-            --accent: #d4af37;    
-            --light-bg: #f9fbfd;
-        }
-        
-        body { 
-            background-color: var(--light-bg); 
-            font-family: 'Poppins', sans-serif; 
-            min-height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin: 0; 
-            position: relative;
-            overflow-x: hidden;
-            overflow-y: auto; 
-            padding: 40px 20px; 
-            box-sizing: border-box;
-        }
-        
+        :root { --primary: #0a74da; --accent: #d4af37; --light-bg: #f9fbfd; }
+        body { background-color: var(--light-bg); font-family: 'Poppins', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; position: relative; overflow-x: hidden; overflow-y: auto; padding: 40px 20px; box-sizing: border-box; }
         .floating-shape { position: fixed; border-radius: 50%; filter: blur(80px); z-index: 1; opacity: 0.5; animation: float 10s infinite alternate; pointer-events: none; }
         .shape-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(212, 175, 55, 0.2); }
         .shape-2 { bottom: -10%; right: -5%; width: 400px; height: 400px; background: rgba(10, 116, 218, 0.15); }
         @keyframes float { 0% { transform: translateY(0); } 100% { transform: translateY(30px); } }
-
-        .auth-card { 
-            background: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(10px);
-            padding: 40px 30px; 
-            border-radius: 20px; 
-            box-shadow: 0 15px 40px rgba(0,0,0,0.08); 
-            width: 100%; 
-            max-width: 450px; 
-            position: relative;
-            z-index: 10;
-            border: 1px solid rgba(255,255,255,0.5);
-            transition: all 0.3s ease;
-            margin: auto; 
-        }
-
+        .auth-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 40px 30px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); width: 100%; max-width: 450px; position: relative; z-index: 10; border: 1px solid rgba(255,255,255,0.5); transition: all 0.3s ease; margin: auto; }
         .brand-title { font-family: 'Playfair Display', serif; color: var(--primary); font-weight: 700; font-size: 2rem; text-align: center; margin-bottom: 5px; }
         .brand-subtitle { text-align: center; color: #666; font-size: 13px; margin-bottom: 30px; transition: 0.3s; }
-
         .form-label { font-size: 13px; font-weight: 600; color: #444; }
         .form-control { border-radius: 10px; padding: 12px 15px; border: 1px solid #ddd; font-size: 14px; transition: 0.3s; }
         .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(10, 116, 218, 0.1); }
-
         .captcha-container { background: #f8faff; border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; position: relative;}
         .puzzle-box { position: relative; width: 100%; max-width: 320px; height: 150px; margin: 0 auto 15px auto; border-radius: 8px; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); background-color: #eee;}
         #mainCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         #pieceCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
-        
         .slider-container { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 10px;}
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 35px; width: 35px; border-radius: 50%; background: var(--primary); cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 3px solid #fff; margin-top: -12px; transition: background 0.3s;}
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 10px; cursor: pointer; background: #ddd; border-radius: 10px; border: 1px solid #ccc; }
         input[type=range]:focus { outline: none; }
-        
         .captcha-status { font-size: 12px; font-weight: bold; margin-top: 10px; color: #666; transition: 0.3s;}
         .captcha-success { color: #25d366 !important; }
         .captcha-fail { color: #dc3545 !important; }
-
         .btn-primary-custom { background: var(--primary); color: white; border: none; border-radius: 50px; padding: 12px; font-weight: 600; font-size: 15px; transition: 0.3s; width: 100%; }
         .btn-primary-custom:hover { background: #085ba8; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(10, 116, 218, 0.3); }
         .btn-primary-custom:disabled { background: #b0b0b0; cursor: not-allowed; transform: none; box-shadow: none; }
-
         .toggle-mode-btn { transition: 0.3s; cursor: pointer; }
         .toggle-mode-btn:hover { color: var(--primary) !important; }
     </style>
@@ -85,7 +45,7 @@
 
     <div class="auth-card" id="authCard">
         <div class="brand-title">Healthy Secret 🌿</div>
-        <div class="brand-subtitle" id="formSubtitle">Silakan isi data untuk masuk ke sistem Pre-Order.</div>
+        <div class="brand-subtitle" id="formSubtitle">Silakan isi data untuk mendaftar atau masuk.</div>
 
         <form id="authForm">
             <div id="userFields">
@@ -96,6 +56,7 @@
                 <div class="mb-3">
                     <label class="form-label">📱 Nomor WhatsApp Aktif</label>
                     <input type="number" id="userPhone" class="form-control" placeholder="Contoh: 08123456789">
+                    <small class="text-success" style="font-size:11px;">*Jika sudah terdaftar, nomor ini akan digunakan untuk Login.</small>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">📍 Alamat Pengiriman (Opsional)</label>
@@ -161,7 +122,7 @@
                 adminFields.style.display = 'none';
                 submitBtn.innerText = 'Kirim OTP ke WhatsApp ➜';
                 submitBtn.style.backgroundColor = '#0a74da';
-                formSubtitle.innerText = 'Silakan isi data untuk masuk ke sistem Pre-Order.';
+                formSubtitle.innerText = 'Silakan isi data untuk mendaftar atau masuk.';
                 this.innerHTML = '🔒 Masuk sebagai Admin';
             }
             initCaptcha();
@@ -282,6 +243,7 @@
             if(currentMode === 'user') {
                 const name = document.getElementById('userName').value;
                 const phone = document.getElementById('userPhone').value;
+                const address = document.getElementById('userAddress').value || "-";
                 
                 if(!name || !phone) {
                     alert("Nama dan Nomor WhatsApp wajib diisi!");
@@ -289,14 +251,31 @@
                 }
 
                 const sanitize = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                const data = {
-                    name: sanitize(name),
-                    phone: sanitize(phone),
-                    address: sanitize(document.getElementById('userAddress').value || "-")
-                };
+                
+                // --- FITUR BARU: MANAJEMEN DATABASE PELANGGAN (HS_USERS_DB) ---
+                let usersDB = JSON.parse(localStorage.getItem('HS_USERS_DB')) || [];
+                let existingUser = usersDB.find(u => u.phone === phone);
+                
+                if (existingUser) {
+                    // Cek jika akun pelanggan diblokir oleh Admin
+                    if (existingUser.status === 'blocked') {
+                        alert("🚨 Akses Ditolak! Akun Anda telah ditangguhkan karena alasan tertentu. Silakan hubungi Admin.");
+                        initCaptcha(); // Reset captha agar tidak bisa spam
+                        return;
+                    }
+                    // Jika lolos, update nama & alamat terbarunya
+                    existingUser.name = sanitize(name);
+                    existingUser.address = sanitize(address);
+                } else {
+                    // Daftarkan pelanggan baru ke Database Admin
+                    usersDB.push({ phone: sanitize(phone), name: sanitize(name), address: sanitize(address), status: 'active' });
+                }
+                localStorage.setItem('HS_USERS_DB', JSON.stringify(usersDB));
 
+                // Simpan Sesi Login
+                const data = { name: sanitize(name), phone: sanitize(phone), address: sanitize(address) };
                 localStorage.setItem('hs_user_data', JSON.stringify(data));
-                window.location.href = "otp.html"; // LINK HTML
+                window.location.href = "otp.html";
 
             } else if(currentMode === 'admin') {
                 const u = document.getElementById('adminUser').value;
@@ -305,7 +284,7 @@
                 if(u === "admin" && p === "medan2026") {
                     localStorage.setItem('HS_AUTH', 'true');
                     alert("Akses Diterima! Mengarahkan ke Dashboard Admin...");
-                    window.location.href = "admin.html"; // LINK HTML
+                    window.location.href = "admin.html";
                 } else {
                     alert("Akses Ditolak! Username atau Password Admin salah.");
                     initCaptcha(); 
